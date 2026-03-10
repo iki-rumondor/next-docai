@@ -21,7 +21,7 @@ const iconStyles = {
 const StatCard = ({ title, value, icon: Icon, trend, variant = "default" }: StatCardProps) => {
     return (
         <Card className="bg-card shadow-card border-border/50 rounded-2xl animate-fade-in hover:shadow-elevated transition-shadow duration-300">
-            <CardContent className="p-7">
+            <CardContent className="px-7 py-2">
                 <div className="flex items-start justify-between">
                     <div className="space-y-3">
                         <p className="text-[13px] font-medium text-muted-foreground">{title}</p>
