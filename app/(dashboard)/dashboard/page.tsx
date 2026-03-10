@@ -3,7 +3,7 @@ import StatCard from "@/components/StatCard";
 import { mockJobs } from "@/data/mockData";
 import { AlertTriangle, CheckCircle, Cpu, FileCheck } from "lucide-react";
 
-export default function page() {
+export default function DashboardPage() {
     return (
         <div className="space-y-10 animate-fade-in">
             <div>

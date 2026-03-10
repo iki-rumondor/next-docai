@@ -1,6 +1,6 @@
 import UploadDropzone from '@/components/UploadDropzone';
 
-export default function page() {
+export default function UploadPage() {
     return (
         <div className="max-w-2xl mx-auto space-y-8 animate-fade-in">
             <div>

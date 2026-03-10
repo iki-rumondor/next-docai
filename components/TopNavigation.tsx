@@ -15,7 +15,7 @@ const TopNavigation = () => {
     const pathname = usePathname();
 
     return (
-        <header className="sticky top-0 z-50 w-full pt-5 pb-3 px-6">
+        <header className="top-0 z-50 w-full pt-5 pb-3 px-6">
             <div className="mx-auto max-w-7xl flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                     <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shadow-md">
