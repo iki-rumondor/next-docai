@@ -8,9 +8,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { showToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,7 +25,9 @@ const TopNavigation = () => {
     const pathname = usePathname();
 
     const handleLogout = () => {
-        showToast({ title: "Logged out", description: "You have been signed out." });
+        toast.success("Logged out", {
+            description: "You have been signed out.",
+        });
         router.push("/login");
     };
 
