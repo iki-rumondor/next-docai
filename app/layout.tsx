@@ -1,10 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Geist } from 'next/font/google';
-import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { Toaster } from "sonner";
 import QueryProvider from "@/shared/providers/QueryProvider";
+import { cn } from "@/shared/lib/utils";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 

@@ -4,8 +4,8 @@ import { Clock, FileText, Layers, RotateCcw } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { InstanceCard } from '@/features/dashboard';
-import { RetryModal } from './RetryModal';
 import { Job, mockInstances } from '@/data/mockData';
+import { RetryModal } from '@/shared/components/RetryModal';
 
 export const RetryModalJobs = ({ job }: { job: Job }) => {
     const [retryOpen, setRetryOpen] = useState(false);

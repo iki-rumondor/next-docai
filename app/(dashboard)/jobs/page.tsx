@@ -1,11 +1,11 @@
 'use client';
 
-import JobsTable from "@/features/jobs/components/JobsTable";
 import { Input } from "@/shared/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { mockJobs } from "@/data/mockData";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { JobsTable } from "@/features/jobs";
 
 export default function ProcessingJobsPage() {
     const [search, setSearch] = useState("");
