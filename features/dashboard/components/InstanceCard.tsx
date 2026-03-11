@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import StatusBadge from "@/components/StatusBadge";
+import { Button } from "@/shared/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { RetryModal } from "@/shared/components/RetryModal";
 import { DocumentInstance } from "@/data/mockData";
-import RetryModal from "./RetryModal";
 
 interface InstanceCardProps {
     instance: DocumentInstance;
 }
 
-const InstanceCard = ({ instance }: InstanceCardProps) => {
+export const InstanceCard = ({ instance }: InstanceCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [retryOpen, setRetryOpen] = useState(false);
 

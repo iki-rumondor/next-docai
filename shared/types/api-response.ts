@@ -12,4 +12,4 @@ export interface PaginatedData<T> {
   totalPages: number;
 }
 
-export interface PaginatedApiResponse<T> extends ApiResponse<PaginatedData<T>> {}
+export type PaginatedApiResponse<T> = ApiResponse<PaginatedData<T>>;

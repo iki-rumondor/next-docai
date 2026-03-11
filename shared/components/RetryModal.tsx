@@ -5,8 +5,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/shared/components/ui/dialog";
+import { Button } from "@/shared/components/ui/button";
 import { RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,7 +17,7 @@ interface RetryModalProps {
     description: string;
 }
 
-const RetryModal = ({ open, onOpenChange, title, description }: RetryModalProps) => {
+export const RetryModal = ({ open, onOpenChange, title, description }: RetryModalProps) => {
     const handleRetry = () => {
         onOpenChange(false);
         toast.success("Retry triggered. Processing will restart shortly.");
@@ -45,5 +45,3 @@ const RetryModal = ({ open, onOpenChange, title, description }: RetryModalProps)
         </Dialog>
     );
 };
-
-export default RetryModal;

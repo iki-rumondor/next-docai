@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Copy, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 
 interface JsonViewerProps {
@@ -65,7 +65,7 @@ const JsonNode = ({ data, depth = 0 }: { data: unknown; depth?: number }) => {
     return <span>{String(data)}</span>;
 };
 
-const JsonViewer = ({ data, title = "JSON Output" }: JsonViewerProps) => {
+export const JsonViewer = ({ data, title = "JSON Output" }: JsonViewerProps) => {
     const jsonString = JSON.stringify(data, null, 2);
 
     const handleCopy = () => {
@@ -104,4 +104,4 @@ const JsonViewer = ({ data, title = "JSON Output" }: JsonViewerProps) => {
     );
 };
 
-export default JsonViewer;
+

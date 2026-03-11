@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
@@ -18,7 +18,7 @@ const iconStyles = {
     info: "bg-info/10 text-info",
 };
 
-const StatCard = ({ title, value, icon: Icon, trend, variant = "default" }: StatCardProps) => {
+export const StatCard = ({ title, value, icon: Icon, trend, variant = "default" }: StatCardProps) => {
     return (
         <Card className="bg-card shadow-card border-border/50 rounded-2xl animate-fade-in hover:shadow-elevated transition-shadow duration-300">
             <CardContent className="px-7 py-2">
@@ -38,5 +38,3 @@ const StatCard = ({ title, value, icon: Icon, trend, variant = "default" }: Stat
         </Card>
     );
 };
-
-export default StatCard;

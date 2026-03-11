@@ -1,4 +1,4 @@
-import TopNavigation from "@/components/TopNavigation";
+import TopNavigation from "@/shared/components/TopNavigation";
 import "./style.css"
 
 

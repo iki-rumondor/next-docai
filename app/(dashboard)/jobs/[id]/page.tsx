@@ -1,6 +1,5 @@
-import BackButton from '@/components/BackButton';
-
-import RetryModalJobs from './_components/RetryModalJobs';
+import { BackButton } from '@/shared/components/BackButton';
+import { RetryModalJobs } from '@/features/jobs';
 import { mockJobs } from '@/data/mockData';
 
 export default async function DetailJobsPage({

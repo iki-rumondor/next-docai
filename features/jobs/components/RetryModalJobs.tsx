@@ -1,13 +1,13 @@
 'use client';
-import RetryModal from '@/components/RetryModal'
 import { useState } from 'react'
-import InstanceCard from '@/components/InstanceCard';
-import StatusBadge from '@/components/StatusBadge';
-import { Button } from '@/components/ui/button';
-import { Job, mockInstances } from '@/data/mockData';
 import { Clock, FileText, Layers, RotateCcw } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button';
+import { StatusBadge } from '@/shared/components/StatusBadge';
+import { InstanceCard } from '@/features/dashboard';
+import { RetryModal } from './RetryModal';
+import { Job, mockInstances } from '@/data/mockData';
 
-export default function RetryModalJobs({ job }: { job: Job }) {
+export const RetryModalJobs = ({ job }: { job: Job }) => {
     const [retryOpen, setRetryOpen] = useState(false);
     const hasFailedPages = job.status === "failed";
     return (

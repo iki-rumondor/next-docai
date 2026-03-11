@@ -1,5 +1,5 @@
-import JobsTable from "@/components/JobsTable";
-import StatCard from "@/components/StatCard";
+import { JobsTable } from "@/features/jobs";
+import { StatCard } from "@/shared/components/StatCard";
 import { mockJobs } from "@/data/mockData";
 import { AlertTriangle, CheckCircle, Cpu, FileCheck } from "lucide-react";
 

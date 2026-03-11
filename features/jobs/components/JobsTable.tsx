@@ -1,19 +1,19 @@
 'use client';
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
+import { Button } from "@/shared/components/ui/button";
+import { Progress } from "@/shared/components/ui/progress";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Job } from "@/data/mockData";
-import StatusBadge from "./StatusBadge";
+import { StatusBadge } from "@/shared/components/StatusBadge";
 
 interface JobsTableProps {
     jobs: Job[];
     compact?: boolean;
 }
 
-const JobsTable = ({ jobs, compact = false }: JobsTableProps) => {
+export const JobsTable = ({ jobs, compact = false }: JobsTableProps) => {
     const router = useRouter();
 
     return (
@@ -71,4 +71,4 @@ const JobsTable = ({ jobs, compact = false }: JobsTableProps) => {
     );
 };
 
-export default JobsTable;
+

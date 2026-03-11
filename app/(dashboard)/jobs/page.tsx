@@ -1,8 +1,8 @@
 'use client';
 
-import JobsTable from "@/components/JobsTable";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import JobsTable from "@/features/jobs/components/JobsTable";
+import { Input } from "@/shared/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { mockJobs } from "@/data/mockData";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";

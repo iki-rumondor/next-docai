@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/shared/components/ui/badge";
 
 type Status = "completed" | "processing" | "queued" | "failed";
 
@@ -13,10 +13,8 @@ interface StatusBadgeProps {
     status: Status;
 }
 
-const StatusBadge = ({ status }: StatusBadgeProps) => {
+export const StatusBadge = ({ status }: StatusBadgeProps) => {
     const config = statusConfig[status];
     return <Badge variant='outline' className={`${config.color}`}> {config.label}</ Badge >;
 };
-
-export default StatusBadge;
 export type { Status };

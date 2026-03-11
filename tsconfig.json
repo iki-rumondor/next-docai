@@ -21,7 +21,11 @@
     "paths": {
       "@/*": ["./*"],
       "@/features/*": ["./features/*"],
-      "@/shared/*": ["./shared/*"]
+      "@/shared/*": ["./shared/*"],
+      "@/components/*": ["./shared/components/*"],
+      "@/providers/*": ["./shared/providers/*"],
+      "@/hooks/*": ["./shared/hooks/*"],
+      "@/lib/utils": ["./shared/utils/utils.ts"]
     }
   },
   "include": [

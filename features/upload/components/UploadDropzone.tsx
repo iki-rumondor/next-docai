@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from "react";
 import { FileText, Upload, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "@/shared/components/ui/button";
+import { Progress } from "@/shared/components/ui/progress";
 import { toast } from "sonner";
 
 interface UploadFile {
@@ -13,7 +13,7 @@ interface UploadFile {
     status: "pending" | "uploading" | "complete" | "error";
 }
 
-const UploadDropzone = () => {
+export const UploadDropzone = () => {
     const [files, setFiles] = useState<UploadFile[]>([]);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -167,4 +167,4 @@ const UploadDropzone = () => {
     );
 };
 
-export default UploadDropzone;
+

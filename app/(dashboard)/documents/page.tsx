@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
-import InstanceCard from "@/components/InstanceCard";
-import JsonViewer from "@/components/JsonViewer";
+import { InstanceCard } from "@/features/dashboard";
+import { JsonViewer } from "@/features/documents";
 import { mockDocumentResult, mockInstances } from "@/data/mockData";
 
 const DocumentResultPage = () => {
