@@ -9,7 +9,7 @@ const UserManagementPage = () => {
             User Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage all users and permissions
+            Manage user roles, system access, and accounts
           </p>
         </div>
         <AddUser />

@@ -25,7 +25,6 @@ const navItems = [
   { to: "/upload", label: "Upload", icon: Upload },
   { to: "/jobs", label: "Processing Jobs", icon: Cpu },
   { to: "/documents", label: "Documents", icon: FileText },
-  { to: "/users", label: "Users", icon: User },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 

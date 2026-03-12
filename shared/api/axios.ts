@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { env } from '../config/env';
 import { normalizeApiError } from '../lib/api-error';
 
 export const apiClient = axios.create({
-  baseURL: env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10000,
 });
 

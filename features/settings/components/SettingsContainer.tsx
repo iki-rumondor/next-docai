@@ -5,6 +5,8 @@ import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { Label } from "@/shared/components/ui/label";
 import { Switch } from "@/shared/components/ui/switch";
+import { Users, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export const SettingsContainer = () => {
     return (
@@ -51,6 +53,30 @@ export const SettingsContainer = () => {
                         </div>
                         <Switch />
                     </div>
+                </CardContent>
+            </Card>
+
+            <Card className="shadow-card border-border/60 rounded-xl">
+                <CardHeader>
+                    <CardTitle className="text-base">Management Data</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    <Link href="/users">
+                        <div className="flex items-center justify-between p-3 -mx-3 rounded-xl hover:bg-accent/40 transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-primary/10 shrink-0">
+                                    <Users className="h-5 w-5 text-primary" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium">User Management</p>
+                                    <p className="text-xs text-muted-foreground">Manage user roles, system access, and accounts</p>
+                                </div>
+                            </div>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full pointer-events-none text-muted-foreground shrink-0">
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </Link>
                 </CardContent>
             </Card>
 
