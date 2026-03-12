@@ -1,3 +1,12 @@
+"use client";
+"use no memo";
+
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  createColumnHelper,
+} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -16,8 +25,19 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { useMemo } from "react";
+import { useUsersQuery } from "../hooks/useUsersQuery";
 
-const mockUsers = [
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastLogin: string;
+}
+
+const mockUsers: User[] = [
   {
     id: "1",
     name: "Ahmad Fauzi",
@@ -71,91 +91,177 @@ const roleBadgeVariant = (role: string) => {
   }
 };
 
+const columnHelper = createColumnHelper<User>();
+
 export const UsersTable = () => {
+  const { data: queryData, isLoading, error } = useUsersQuery();
+
+  const data = useMemo(() => {
+    return queryData?.data ?? mockUsers;
+  }, [queryData]);
+
+  const columns = useMemo(() => {
+    return [
+      columnHelper.accessor("name", {
+        header: "User",
+        cell: (info) => {
+          const user = info.row.original;
+          return (
+            <div className="flex items-center gap-3">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                  {user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-[13px] font-medium">{user.name}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("role", {
+        header: "Role",
+        cell: (info) => (
+          <Badge variant={roleBadgeVariant(info.getValue())}>
+            {info.getValue()}
+          </Badge>
+        ),
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: (info) => {
+          const status = info.getValue();
+          return (
+            <Badge
+              variant={status === "active" ? "default" : "outline"}
+              className={
+                status === "active"
+                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10"
+                  : ""
+              }
+            >
+              {status === "active" ? "Aktif" : "Nonaktif"}
+            </Badge>
+          );
+        },
+      }),
+      columnHelper.accessor("lastLogin", {
+        header: "Last Login",
+        cell: (info) => (
+          <span className="text-[13px] text-muted-foreground">
+            {info.getValue()}
+          </span>
+        ),
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: () => <div className="text-right">Actions</div>,
+        cell: () => (
+          <div className="text-right">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  Hapus
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ),
+      }),
+    ];
+  }, []);
+
+  // eslint-disable-next-line
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  if (isLoading)
+    return (
+      <div className="p-8 text-center text-muted-foreground animate-pulse">
+        Loading users...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="p-8 text-center text-destructive">
+        Error loading data: {error.message}
+      </div>
+    );
+
   return (
     <Table>
       <TableHeader>
-        <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/50">
-          <TableHead className="font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4 px-5">
-            User
-          </TableHead>
-          <TableHead className="font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4">
-            Role
-          </TableHead>
-          <TableHead className="font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4">
-            Status
-          </TableHead>
-          <TableHead className="font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4">
-            Last Login
-          </TableHead>
-          <TableHead className="font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4 px-5 text-right">
-            Actions
-          </TableHead>
-        </TableRow>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow
+            key={headerGroup.id}
+            className="bg-muted/40 hover:bg-muted/40 border-b border-border/50"
+          >
+            {headerGroup.headers.map((header, index) => (
+              <TableHead
+                key={header.id}
+                className={`font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4 ${
+                  index === 0
+                    ? "px-5"
+                    : index === headerGroup.headers.length - 1
+                      ? "px-5 text-right"
+                      : ""
+                }`}
+              >
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
       </TableHeader>
       <TableBody>
-        {mockUsers.map((user, idx) => (
+        {table.getRowModel().rows.map((row, idx) => (
           <TableRow
-            key={user.id}
+            key={row.id}
             className={`transition-colors duration-150 hover:bg-accent/40 ${
-              idx !== mockUsers.length - 1 ? "border-b border-border/30" : ""
+              idx !== table.getRowModel().rows.length - 1
+                ? "border-b border-border/30"
+                : ""
             }`}
           >
-            <TableCell className="py-4 px-5">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                    {user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-[13px] font-medium">{user.name}</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    {user.email}
-                  </p>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell className="py-4">
-              <Badge variant={roleBadgeVariant(user.role)}>{user.role}</Badge>
-            </TableCell>
-            <TableCell className="py-4">
-              <Badge
-                variant={user.status === "active" ? "default" : "outline"}
-                className={
-                  user.status === "active"
-                    ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10"
-                    : ""
-                }
+            {row.getVisibleCells().map((cell, index) => (
+              <TableCell
+                key={cell.id}
+                className={`py-4 ${
+                  index === 0
+                    ? "px-5"
+                    : index === row.getVisibleCells().length - 1
+                      ? "px-5 text-right"
+                      : ""
+                }`}
               >
-                {user.status === "active" ? "Aktif" : "Nonaktif"}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-[13px] text-muted-foreground py-4">
-              {user.lastLogin}
-            </TableCell>
-            <TableCell className="text-right py-4 px-5">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
-                    Hapus
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
           </TableRow>
         ))}
       </TableBody>
