@@ -23,67 +23,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash, Loader2 } from "lucide-react";
+import { useUsers } from "@/features/users/hooks/useUsers";
 import { useMemo } from "react";
-// import { useUsersQuery } from "@/features/users/hooks/useUsersQuery";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  lastLogin: string;
-}
-
-const mockUsers: User[] = [
-  {
-    id: "1",
-    name: "Ahmad Fauzi",
-    email: "ahmad@example.com",
-    role: "Admin",
-    status: "active",
-    lastLogin: "2026-03-12",
-  },
-  {
-    id: "2",
-    name: "Siti Nurhaliza",
-    email: "siti@example.com",
-    role: "Editor",
-    status: "active",
-    lastLogin: "2026-03-11",
-  },
-  {
-    id: "3",
-    name: "Budi Santoso",
-    email: "budi@example.com",
-    role: "Viewer",
-    status: "active",
-    lastLogin: "2026-03-10",
-  },
-  {
-    id: "4",
-    name: "Dewi Lestari",
-    email: "dewi@example.com",
-    role: "Editor",
-    status: "inactive",
-    lastLogin: "2026-02-28",
-  },
-  {
-    id: "5",
-    name: "Reza Pratama",
-    email: "reza@example.com",
-    role: "Viewer",
-    status: "active",
-    lastLogin: "2026-03-09",
-  },
-];
+import { User } from "../model/user.schema";
 
 const roleBadgeVariant = (role: string) => {
-  switch (role) {
-    case "Admin":
+  switch (role.toLowerCase()) {
+    case "admin":
       return "default";
-    case "Editor":
+    case "operator":
       return "secondary";
     default:
       return "outline";
@@ -93,11 +42,12 @@ const roleBadgeVariant = (role: string) => {
 const columnHelper = createColumnHelper<User>();
 
 export const UsersTable = () => {
-  // const { data: queryData, isLoading, error } = useUsersQuery();
+  const { useUsersList, delete: deleteUser, isDeleting } = useUsers();
+  const { data: queryData, isLoading, error } = useUsersList();
 
   const data = useMemo(() => {
-    return mockUsers;
-  }, []);
+    return queryData?.data || [];
+  }, [queryData]);
 
   const columns = useMemo(() => {
     return [
@@ -110,8 +60,8 @@ export const UsersTable = () => {
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                   {user.name
-                    .split(" ")
-                    .map((n) => n[0])
+                    ?.split(" ")
+                    .map((n: string) => n[0])
                     .join("")}
                 </AvatarFallback>
               </Avatar>
@@ -129,14 +79,14 @@ export const UsersTable = () => {
         header: "Role",
         cell: (info) => (
           <Badge variant={roleBadgeVariant(info.getValue())}>
-            {info.getValue()}
+            <span className="capitalize">{info.getValue()}</span>
           </Badge>
         ),
       }),
       columnHelper.accessor("status", {
         header: "Status",
         cell: (info) => {
-          const status = info.getValue();
+          const status = info.getValue() || 'active';
           return (
             <Badge
               variant={status === "active" ? "default" : "outline"}
@@ -162,7 +112,7 @@ export const UsersTable = () => {
       columnHelper.display({
         id: "actions",
         header: () => <div className="text-right">Actions</div>,
-        cell: () => (
+        cell: (info) => (
           <div className="text-right">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -179,9 +129,17 @@ export const UsersTable = () => {
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                <DropdownMenuItem 
+                  className="text-destructive focus:text-destructive"
+                  disabled={isDeleting}
+                  onClick={() => {
+                    if (confirm('Are you sure you want to delete this user?')) {
+                      deleteUser(info.row.original.id);
+                    }
+                  }}
+                >
                   <Trash className="h-4 w-4 mr-2" />
-                  Delete
+                  {isDeleting ? 'Deleting...' : 'Delete'}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -189,27 +147,28 @@ export const UsersTable = () => {
         ),
       }),
     ];
-  }, []);
+  }, [deleteUser, isDeleting]);
 
-  // eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // if (isLoading)
-  //   return (
-  //     <div className="p-8 text-center text-muted-foreground animate-pulse">
-  //       Loading users...
-  //     </div>
-  //   );
-  // if (error)
-  //   return (
-  //     <div className="p-8 text-center text-destructive">
-  //       Error loading data: {error.message}
-  //     </div>
-  //   );
+  if (isLoading)
+    return (
+      <div className="p-12 flex flex-col items-center justify-center text-muted-foreground">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+        <p className="text-sm">Loading users...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="p-12 text-center text-destructive">
+        Error loading data: {(error as Error).message}
+      </div>
+    );
 
   return (
     <Table>
