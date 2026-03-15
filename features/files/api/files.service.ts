@@ -6,21 +6,6 @@ import {
 } from '../model/files.schema';
 
 export const filesService = {
-  upload: async (file: File, pages?: string): Promise<ApiResponse<SourceFile>> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    if (pages) {
-      formData.append('pages', pages);
-    }
-
-    const { data } = await apiClient.post<ApiResponse<SourceFile>>('/source-files', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return data;
-  },
-
   list: async (query?: ListFilesQuery): Promise<PaginatedApiResponse<SourceFile>> => {
     const { data } = await apiClient.get<PaginatedApiResponse<SourceFile>>('/source-files', {
       params: query,

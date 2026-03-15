@@ -70,34 +70,6 @@ export const useFiles = () => {
     });
   };
 
-  const uploadMutation = useMutation({
-    mutationFn: async ({ file, pages }: { file: File, pages?: string }) => {
-      if (isMock) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        return {
-          data: {
-            id: `JOB-${Math.floor(Math.random() * 1000)}`,
-            fileName: file.name,
-            pages: 10,
-            status: 'queued' as const,
-            progress: 0,
-            createdAt: new Date().toISOString(),
-          },
-          meta: { success: true, message: 'File uploaded successfully (Mock)' }
-        };
-      }
-      return filesService.upload(file, pages);
-    },
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ['source-files'] });
-      const message = res.meta.message || 'Upload successful';
-      toast.success(message);
-    },
-    onError: (err: ApiError) => {
-      toast.error('Upload failed', { description: err.message });
-    }
-  });
-
   const retryMutation = useMutation({
     mutationFn: async (id: string) => {
       if (isMock) {
@@ -122,8 +94,6 @@ export const useFiles = () => {
   return {
     useFileList,
     useFileDetail,
-    upload: uploadMutation.mutate,
-    isUploading: uploadMutation.isPending,
     retry: retryMutation.mutate,
     isRetrying: retryMutation.isPending,
   };
