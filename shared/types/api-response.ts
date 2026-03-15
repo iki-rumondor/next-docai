@@ -1,7 +1,11 @@
 export interface ApiResponse<T> {
   data: T;
   message?: string;
-  meta?: Record<string, unknown>;
+  meta: {
+    success: boolean;
+    message?: string;
+    [key: string]: unknown;
+  };
 }
 
 export interface PaginatedData<T> {

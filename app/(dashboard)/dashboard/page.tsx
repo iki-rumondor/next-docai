@@ -1,10 +1,14 @@
-import { FilesTable } from "@/features/files";
+'use client';
+
+import { FilesTable, useFiles } from "@/features/files";
 import { StatCard } from "@/shared/components/StatCard";
 import { mockJobs } from "@/data/mockData";
-import { AlertTriangle, CheckCircle, Cpu, FileCheck, Info } from "lucide-react";
+import { AlertTriangle, CheckCircle, Cpu, FileCheck, Info, Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
-    const processingJobs = mockJobs.filter(job => job.status === 'processing');
+    const { useFileList } = useFiles();
+    const { data: filesData, isLoading } = useFileList({ status: 'processing' });
+    const processingJobs = filesData?.data?.items || [];
 
     return (
         <div className="space-y-10 animate-fade-in">
@@ -43,7 +47,12 @@ export default function DashboardPage() {
 
             <div>
                 <h2 className="text-lg font-semibold text-foreground mb-5">Files in Processing</h2>
-                {processingJobs.length > 0 ? (
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center p-12 bg-muted/5 border border-border/40 rounded-2xl text-center">
+                        <Loader2 className="h-8 w-8 text-primary animate-spin mb-3" />
+                        <p className="text-sm text-muted-foreground">Updating processing status...</p>
+                    </div>
+                ) : processingJobs.length > 0 ? (
                     <FilesTable jobs={processingJobs} compact />
                 ) : (
                     <div className="flex flex-col items-center justify-center p-12 bg-muted/20 border border-dashed border-border rounded-2xl text-center">
