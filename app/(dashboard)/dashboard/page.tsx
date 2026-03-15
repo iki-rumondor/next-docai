@@ -1,9 +1,11 @@
-import { JobsTable } from "@/features/jobs";
+import { FilesTable } from "@/features/files";
 import { StatCard } from "@/shared/components/StatCard";
 import { mockJobs } from "@/data/mockData";
-import { AlertTriangle, CheckCircle, Cpu, FileCheck } from "lucide-react";
+import { AlertTriangle, CheckCircle, Cpu, FileCheck, Info } from "lucide-react";
 
 export default function DashboardPage() {
+    const processingJobs = mockJobs.filter(job => job.status === 'processing');
+
     return (
         <div className="space-y-10 animate-fade-in">
             <div>
@@ -21,27 +23,37 @@ export default function DashboardPage() {
                 />
                 <StatCard
                     title="Currently Processing"
-                    value={3}
+                    value={processingJobs.length}
                     icon={Cpu}
                     variant="info"
                 />
                 <StatCard
                     title="Completed Jobs"
-                    value={89}
+                    value={mockJobs.filter(j => j.status === 'completed').length}
                     icon={CheckCircle}
                     variant="success"
                 />
                 <StatCard
                     title="Failed Jobs"
-                    value={2}
+                    value={mockJobs.filter(j => j.status === 'failed').length}
                     icon={AlertTriangle}
                     variant="destructive"
                 />
             </div>
 
             <div>
-                <h2 className="text-lg font-semibold text-foreground mb-5">Recent Processing Jobs</h2>
-                <JobsTable jobs={mockJobs.slice(0, 5)} compact />
+                <h2 className="text-lg font-semibold text-foreground mb-5">Files in Processing</h2>
+                {processingJobs.length > 0 ? (
+                    <FilesTable jobs={processingJobs} compact />
+                ) : (
+                    <div className="flex flex-col items-center justify-center p-12 bg-muted/20 border border-dashed border-border rounded-2xl text-center">
+                        <div className="h-12 w-12 rounded-full bg-muted/10 flex items-center justify-center mb-4">
+                            <Info className="h-6 w-6 text-muted-foreground/60" />
+                        </div>
+                        <h3 className="text-sm font-medium text-foreground">No files in processing</h3>
+                        <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">All document processing tasks have been completed.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

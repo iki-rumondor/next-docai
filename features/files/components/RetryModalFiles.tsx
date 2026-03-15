@@ -7,7 +7,7 @@ import { InstanceCard } from '@/features/dashboard';
 import { Job, mockInstances } from '@/data/mockData';
 import { RetryModal } from '@/shared/components/RetryModal';
 
-export const RetryModalJobs = ({ job }: { job: Job }) => {
+export const RetryModalFiles = ({ job }: { job: Job }) => {
     const [retryOpen, setRetryOpen] = useState(false);
     const hasFailedPages = job.status === "failed";
     return (

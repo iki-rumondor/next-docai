@@ -1,8 +1,8 @@
 import { BackButton } from '@/shared/components/BackButton';
-import { RetryModalJobs } from '@/features/jobs';
+import { RetryModalFiles } from '@/features/files';
 import { mockJobs } from '@/data/mockData';
 
-export default async function DetailJobsPage({
+export default async function DetailFilesPage({
     params,
 }: {
     params: Promise<{ id: string }>
@@ -12,8 +12,8 @@ export default async function DetailJobsPage({
     
     return (
         <div className="space-y-6 animate-fade-in">
-            <BackButton href="/jobs" label="Back to Jobs" />
-            <RetryModalJobs job={job} />
+            <BackButton href="/files" label="Back to Files" />
+            <RetryModalFiles job={job} />
         </div>
     );
 }

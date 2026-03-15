@@ -1,13 +1,10 @@
 "use client";
-import {
-  LayoutDashboard,
-  Upload,
-  Cpu,
-  FileText,
-  Settings,
-  LogOut,
-  User,
-} from "lucide-react";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Cpu, LogOut, User } from "lucide-react";
+
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
@@ -16,19 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-
 import { useAuth } from "@/features/auth";
-import { useEffect, useState } from "react";
-
-const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/upload", label: "Upload", icon: Upload },
-  { to: "/jobs", label: "Processing Jobs", icon: Cpu },
-  { to: "/documents", label: "Documents", icon: FileText },
-  { to: "/settings", label: "Settings", icon: Settings },
-];
+import { NAVIGATION_CONFIG } from "@/shared/config/navigation";
 
 const TopNavigation = () => {
   const router = useRouter();
@@ -37,8 +23,8 @@ const TopNavigation = () => {
   const [userName, setUserName] = useState("U");
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const userInfo = localStorage.getItem('user_info');
+    if (typeof window !== "undefined") {
+      const userInfo = localStorage.getItem("user_info");
       if (userInfo) {
         try {
           const user = JSON.parse(userInfo);
@@ -74,11 +60,9 @@ const TopNavigation = () => {
 
           {/* Nav Links - centered */}
           <div className="flex-1 flex items-center justify-center gap-0.5">
-            {navItems.map((item) => {
+            {NAVIGATION_CONFIG.map((item) => {
               const isActive =
-                item.to === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.to);
+                pathname === item.to || pathname.startsWith(item.to + "/");
               return (
                 <Link
                   key={item.to}

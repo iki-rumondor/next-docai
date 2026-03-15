@@ -1,16 +1,27 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NAVIGATION_CONFIG } from './shared/config/navigation';
 
 export function proxy(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Define protected and public routes
-  const isDashboardRoute = pathname === '/' || pathname.startsWith('/dashboard') || pathname.startsWith('/upload') || pathname.startsWith('/jobs') || pathname.startsWith('/documents') || pathname.startsWith('/settings') || pathname.startsWith('/users');
+  // Define public routes
   const isAuthRoute = pathname === '/login';
+  
+  // Define protected routes based on centralized config
+  const protectedPaths = [
+    '/',
+    '/users', // Still protected even if not in main menu
+    ...NAVIGATION_CONFIG.map(item => item.to)
+  ];
+
+  const isProtectedRoute = protectedPaths.some(path => 
+    path === '/' ? pathname === '/' : pathname.startsWith(path)
+  );
 
   // 1. Redirect to login if accessing protected route without token
-  if (isDashboardRoute && !token) {
+  if (isProtectedRoute && !token) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('auth', 'required');
     return NextResponse.redirect(loginUrl);

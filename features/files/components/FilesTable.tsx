@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 import { Job } from "@/data/mockData";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 
-interface JobsTableProps {
+interface FilesTableProps {
     jobs: Job[];
     compact?: boolean;
 }
 
-export const JobsTable = ({ jobs, compact = false }: JobsTableProps) => {
+export const FilesTable = ({ jobs, compact = false }: FilesTableProps) => {
     const router = useRouter();
 
     return (
@@ -36,7 +36,7 @@ export const JobsTable = ({ jobs, compact = false }: JobsTableProps) => {
                             key={job.id}
                             className={`cursor-pointer transition-colors duration-150 hover:bg-accent/40 ${idx !== jobs.length - 1 ? "border-b border-border/30" : ""
                                 }`}
-                            onClick={() => router.push(`/jobs/${job.id}`)}
+                            onClick={() => router.push(`/files/${job.id}`)}
                         >
                             <TableCell className="font-mono text-[13px] font-medium py-4 px-5">{job.id}</TableCell>
                             <TableCell className="font-medium text-[13px] max-w-55 truncate py-4">{job.fileName}</TableCell>
@@ -56,7 +56,7 @@ export const JobsTable = ({ jobs, compact = false }: JobsTableProps) => {
                                     className="text-muted-foreground hover:text-foreground rounded-xl"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        router.push(`/jobs/${job.id}`);
+                                        router.push(`/files/${job.id}`);
                                     }}
                                 >
                                     <Eye className="h-4 w-4 mr-1.5" />
