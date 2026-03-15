@@ -3,13 +3,19 @@ import { useState } from 'react'
 import { Clock, FileText, Layers, RotateCcw } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
-import { InstanceCard } from '@/features/dashboard';
-import { Job, mockInstances } from '@/data/mockData';
 import { RetryModal } from '@/shared/components/RetryModal';
+import { useDocuments, DocumentCard, Document } from '@/features/documents';
+import { SourceFile } from '../model/files.schema';
 
-export const RetryModalFiles = ({ job }: { job: Job }) => {
+export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
+    const { useDocumentsList } = useDocuments({ source_file_id: job.id });
+    const { data: documentsData, isLoading } = useDocumentsList();
+    
     const [retryOpen, setRetryOpen] = useState(false);
     const hasFailedPages = job.status === "failed";
+
+    const documents = documentsData?.data?.items || [];
+
     return (
         <>
             <div className="rounded-xl border border-border/60 bg-card shadow-card p-6">
@@ -51,15 +57,28 @@ export const RetryModalFiles = ({ job }: { job: Job }) => {
                 </div>
             </div>
 
-            <div>
-                <h2 className="text-lg font-semibold text-foreground mb-4">
-                    Detected Document Instances ({mockInstances.length})
+            <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-foreground">
+                    Detected Documents ({isLoading ? "..." : documents.length})
                 </h2>
-                <div className="space-y-3">
-                    {mockInstances.map((instance) => (
-                        <InstanceCard key={instance.id} instance={instance} />
-                    ))}
-                </div>
+                
+                {isLoading ? (
+                    <div className="space-y-3">
+                        {[1, 2].map((i) => (
+                            <div key={i} className="h-24 w-full rounded-2xl bg-muted animate-pulse" />
+                        ))}
+                    </div>
+                ) : documents.length > 0 ? (
+                    <div className="space-y-3">
+                        {documents.map((doc: Document) => (
+                            <DocumentCard key={doc.id} document={doc} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
+                        No documents detected yet.
+                    </div>
+                )}
             </div>
 
             <RetryModal
