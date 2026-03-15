@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { normalizeApiError } from '../lib/api-error';
+import { getCookie } from '../lib/cookies';
 
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -8,11 +9,10 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    // Attach auth token placeholder here
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const token = typeof window !== 'undefined' ? getCookie('auth_token') : '';
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

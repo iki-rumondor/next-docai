@@ -18,7 +18,9 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { toast } from "sonner";
+
+import { useAuth } from "@/features/auth";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -31,12 +33,29 @@ const navItems = [
 const TopNavigation = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { logout } = useAuth();
+  const [userName, setUserName] = useState("U");
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userInfo = localStorage.getItem('user_info');
+      if (userInfo) {
+        try {
+          const user = JSON.parse(userInfo);
+          if (user.name) {
+            const initial = user.name[0].toUpperCase();
+            // eslint-disable-next-line
+            setUserName(initial);
+          }
+        } catch (e) {
+          console.error("Failed to parse user_info", e);
+        }
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
-    toast.success("Logged out", {
-      description: "You have been signed out.",
-    });
-    router.push("/login");
+    logout();
   };
 
   return (
@@ -83,7 +102,7 @@ const TopNavigation = () => {
               <button className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <Avatar className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity">
                   <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                    U
+                    {userName}
                   </AvatarFallback>
                 </Avatar>
               </button>
