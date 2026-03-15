@@ -25,8 +25,11 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash, Loader2 } from "lucide-react";
 import { useUsers } from "@/features/users/hooks/useUsers";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { User } from "../model/user.schema";
+
+import { EditUserModal } from "./EditUserModal";
+import { DeleteUserDialog } from "./DeleteUserDialog";
 
 const roleBadgeVariant = (role: string) => {
   switch (role.toLowerCase()) {
@@ -42,8 +45,15 @@ const roleBadgeVariant = (role: string) => {
 const columnHelper = createColumnHelper<User>();
 
 export const UsersTable = () => {
-  const { useUsersList, delete: deleteUser, isDeleting } = useUsers();
+  const { useUsersList } = useUsers();
   const { data: queryData, isLoading, error } = useUsersList();
+  
+  // Proper state management
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState<User | null>(null);
+  
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedUserForDelete, setSelectedUserForDelete] = useState<User | null>(null);
 
   const data = useMemo(() => {
     return queryData?.data || [];
@@ -125,21 +135,22 @@ export const UsersTable = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  setSelectedUserForEdit(info.row.original);
+                  setEditModalOpen(true);
+                }}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="text-destructive focus:text-destructive"
-                  disabled={isDeleting}
                   onClick={() => {
-                    if (confirm('Are you sure you want to delete this user?')) {
-                      deleteUser(info.row.original.id);
-                    }
+                    setSelectedUserForDelete(info.row.original);
+                    setDeleteDialogOpen(true);
                   }}
                 >
                   <Trash className="h-4 w-4 mr-2" />
-                  {isDeleting ? 'Deleting...' : 'Delete'}
+                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -147,7 +158,7 @@ export const UsersTable = () => {
         ),
       }),
     ];
-  }, [deleteUser, isDeleting]);
+  }, []);
 
   const table = useReactTable({
     data,
@@ -171,62 +182,76 @@ export const UsersTable = () => {
     );
 
   return (
-    <Table>
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow
-            key={headerGroup.id}
-            className="bg-muted/40 hover:bg-muted/40 border-b border-border/50"
-          >
-            {headerGroup.headers.map((header, index) => (
-              <TableHead
-                key={header.id}
-                className={`font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4 ${
-                  index === 0
-                    ? "px-5"
-                    : index === headerGroup.headers.length - 1
-                      ? "px-5 text-right"
-                      : ""
-                }`}
-              >
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row, idx) => (
-          <TableRow
-            key={row.id}
-            className={`transition-colors duration-150 hover:bg-accent/40 ${
-              idx !== table.getRowModel().rows.length - 1
-                ? "border-b border-border/30"
-                : ""
-            }`}
-          >
-            {row.getVisibleCells().map((cell, index) => (
-              <TableCell
-                key={cell.id}
-                className={`py-4 ${
-                  index === 0
-                    ? "px-5"
-                    : index === row.getVisibleCells().length - 1
-                      ? "px-5 text-right"
-                      : ""
-                }`}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="bg-muted/40 hover:bg-muted/40 border-b border-border/50"
+            >
+              {headerGroup.headers.map((header, index) => (
+                <TableHead
+                  key={header.id}
+                  className={`font-semibold text-[11px] uppercase tracking-widest text-muted-foreground py-4 ${
+                    index === 0
+                      ? "px-5"
+                      : index === headerGroup.headers.length - 1
+                        ? "px-5 text-right"
+                        : ""
+                  }`}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row, idx) => (
+            <TableRow
+              key={row.id}
+              className={`transition-colors duration-150 hover:bg-accent/40 ${
+                idx !== table.getRowModel().rows.length - 1
+                  ? "border-b border-border/30"
+                  : ""
+              }`}
+            >
+              {row.getVisibleCells().map((cell, index) => (
+                <TableCell
+                  key={cell.id}
+                  className={`py-4 ${
+                    index === 0
+                      ? "px-5"
+                      : index === row.getVisibleCells().length - 1
+                        ? "px-5 text-right"
+                        : ""
+                  }`}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      
+      <EditUserModal 
+        user={selectedUserForEdit} 
+        open={editModalOpen} 
+        onOpenChange={setEditModalOpen} 
+      />
+      
+      <DeleteUserDialog 
+        user={selectedUserForDelete} 
+        open={deleteDialogOpen} 
+        onOpenChange={setDeleteDialogOpen} 
+      />
+    </>
   );
 };
