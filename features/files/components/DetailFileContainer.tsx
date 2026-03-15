@@ -6,13 +6,23 @@ import { StatusBadge } from '@/shared/components/StatusBadge';
 import { RetryModal } from '@/shared/components/RetryModal';
 import { useDocuments, DocumentCard, Document } from '@/features/documents';
 import { SourceFile } from '../model/files.schema';
+import { useFiles } from '../hooks/useFiles';
 
 export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     const { useDocumentsList } = useDocuments({ source_file_id: job.id });
     const { data: documentsData, isLoading } = useDocumentsList();
+    const { retry: retryFile, isRetrying: isRetryingFile } = useFiles();
     
     const [retryOpen, setRetryOpen] = useState(false);
     const hasFailedPages = job.status === "failed";
+
+    const handleRetryFile = () => {
+        retryFile(job.id, {
+            onSuccess: () => {
+                setRetryOpen(false);
+            }
+        });
+    };
 
     const documents = documentsData?.data?.items || [];
 
@@ -86,6 +96,8 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                 onOpenChange={setRetryOpen}
                 title="Retry Failed Pages"
                 description={`This will re-process all failed pages in ${job.fileName}. Are you sure?`}
+                onConfirm={handleRetryFile}
+                isLoading={isRetryingFile}
             />
         </>
     )

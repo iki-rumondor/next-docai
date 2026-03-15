@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
 import { Document } from "../model/documents.schema";
+import { useJobs } from "../hooks/useJobs";
 
 interface DocumentCardProps {
     document: Document;
@@ -15,6 +16,17 @@ interface DocumentCardProps {
 export const DocumentCard = ({ document }: DocumentCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [retryOpen, setRetryOpen] = useState(false);
+    const { retryJob, isRetrying } = useJobs();
+
+    const handleRetryConfirm = () => {
+        if (document.job_id) {
+            retryJob(document.job_id, {
+                onSuccess: () => {
+                    setRetryOpen(false);
+                }
+            });
+        }
+    };
 
     const documentType = document.document_type?.name || "Unknown Document";
     const vendor = document.vendor?.name || "Unknown Vendor";
@@ -117,6 +129,8 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                 onOpenChange={setRetryOpen}
                 title={`Retry ${documentType}`}
                 description={`This will re-process the ${documentType} from ${vendor}. Are you sure?`}
+                onConfirm={handleRetryConfirm}
+                isLoading={isRetrying}
             />
         </>
     );
