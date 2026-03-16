@@ -1,44 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { Cpu, LogOut, User } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Cpu, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { useAuth } from "@/features/auth";
 import { NAVIGATION_CONFIG } from "@/shared/config/navigation";
+import { useEffect, useState } from "react";
 
 const TopNavigation = () => {
-  const router = useRouter();
   const pathname = usePathname();
-  const { logout } = useAuth();
-  const [userName, setUserName] = useState("U");
+  const { logout, user } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userInfo = localStorage.getItem("user_info");
-      if (userInfo) {
-        try {
-          const user = JSON.parse(userInfo);
-          if (user.name) {
-            const initial = user.name[0].toUpperCase();
-            // eslint-disable-next-line
-            setUserName(initial);
-          }
-        } catch (e) {
-          console.error("Failed to parse user_info", e);
-        }
-      }
-    }
+    // eslint-disable-next-line
+    setMounted(true);
   }, []);
+
+  if (!mounted) return null;
+
+  const userInitial = user?.name?.[0]?.toUpperCase() ?? "U";
 
   const handleLogout = () => {
     logout();
@@ -86,20 +75,12 @@ const TopNavigation = () => {
               <button className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <Avatar className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity">
                   <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                    {userName}
+                    {userInitial}
                   </AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 mt-1">
-              <DropdownMenuItem
-                onClick={() => router.push("/settings")}
-                className="cursor-pointer"
-              >
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleLogout}
                 className="cursor-pointer text-destructive focus:text-destructive"

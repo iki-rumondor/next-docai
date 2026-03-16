@@ -3,7 +3,7 @@ import {
   Upload,
   Cpu,
   Users,
-  Settings,
+  User,
 } from "lucide-react";
 
 export const NAVIGATION_CONFIG = [
@@ -11,7 +11,7 @@ export const NAVIGATION_CONFIG = [
   { to: "/upload", label: "Upload", icon: Upload },
   { to: "/files", label: "Files", icon: Cpu },
   { to: "/users", label: "Users", icon: Users },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
 export type NavItem = typeof NAVIGATION_CONFIG[number];

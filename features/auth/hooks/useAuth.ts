@@ -1,14 +1,29 @@
 'use client';
+
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { authService } from '../api/auth.service';
-import { LoginRequest, LoginResponse } from '../model/auth.schema';
+import { AuthUser, LoginRequest, LoginResponse } from '../model/auth.schema';
 import { setCookie, deleteCookie } from '@/shared/lib/cookies';
 import { ApiError } from '@/shared/lib/api-error';
 
 export const useAuth = () => {
   const router = useRouter();
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      const userInfo = localStorage.getItem('user_info');
+      if (userInfo) {
+        try {
+          return JSON.parse(userInfo);
+        } catch (e) {
+          console.error('Failed to parse user info', e);
+        }
+      }
+    }
+    return null;
+  });
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginRequest) => {
@@ -42,6 +57,7 @@ export const useAuth = () => {
         setCookie('auth_token', response.data.token);
         // Store user info in localStorage for client-side access
         localStorage.setItem('user_info', JSON.stringify(response.data.user));
+        setUser(response.data.user);
         
         toast.success(response.meta.message || 'Login successful');
         router.push('/dashboard');
@@ -57,13 +73,21 @@ export const useAuth = () => {
   const logout = () => {
     deleteCookie('auth_token');
     localStorage.removeItem('user_info');
+    setUser(null);
     toast.success('Logged out successfully');
     router.push('/login');
+  };
+
+  const updateUser = (newUser: AuthUser) => {
+    localStorage.setItem('user_info', JSON.stringify(newUser));
+    setUser(newUser);
   };
 
   return {
     login: loginMutation.mutate,
     isLoading: loginMutation.isPending,
     logout,
+    user,
+    updateUser,
   };
 };
