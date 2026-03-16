@@ -5,7 +5,7 @@ import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { RetryModal } from '@/shared/components/RetryModal';
 import { Progress } from '@/shared/components/ui/progress';
-import { useDocuments, DocumentCard, Document } from '@/features/documents';
+import { useDocuments, DocumentCard, Document, JsonViewer } from '@/features/documents';
 import { SourceFile } from '../model/files.schema';
 import { useFiles } from '../hooks/useFiles';
 
@@ -15,6 +15,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     const { retry: retryFile, isRetrying: isRetryingFile } = useFiles();
     
     const [retryOpen, setRetryOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState<'documents' | 'json'>('documents');
     const hasFailedPages = job.status === "failed";
 
     const handleRetryFile = () => {
@@ -78,27 +79,48 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                 )}
             </div>
 
-            <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-foreground">
-                    Detected Documents ({isLoading ? "..." : documents.length})
-                </h2>
+            <div className="space-y-6">
+                <div className="flex items-center gap-2 p-1 bg-muted/30 rounded-xl w-fit">
+                    <Button
+                        variant={activeTab === 'documents' ? 'secondary' : 'ghost'}
+                        size="sm"
+                        className="rounded-lg h-9 text-sm px-4"
+                        onClick={() => setActiveTab('documents')}
+                    >
+                        Detected Documents ({isLoading ? "..." : documents.length})
+                    </Button>
+                    <Button
+                        variant={activeTab === 'json' ? 'secondary' : 'ghost'}
+                        size="sm"
+                        className="rounded-lg h-9 text-sm px-4"
+                        onClick={() => setActiveTab('json')}
+                    >
+                        File Payload (JSON)
+                    </Button>
+                </div>
                 
-                {isLoading ? (
-                    <div className="space-y-3">
-                        {[1, 2].map((i) => (
-                            <div key={i} className="h-24 w-full rounded-2xl bg-muted animate-pulse" />
-                        ))}
-                    </div>
-                ) : documents.length > 0 ? (
-                    <div className="space-y-3">
-                        {documents.map((doc: Document) => (
-                            <DocumentCard key={doc.id} document={doc} />
-                        ))}
-                    </div>
+                {activeTab === 'documents' ? (
+                    <>
+                        {isLoading ? (
+                            <div className="space-y-3">
+                                {[1, 2].map((i) => (
+                                    <div key={i} className="h-24 w-full rounded-2xl bg-muted animate-pulse" />
+                                ))}
+                            </div>
+                        ) : documents.length > 0 ? (
+                            <div className="space-y-3">
+                                {documents.map((doc: Document) => (
+                                    <DocumentCard key={doc.id} document={doc} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
+                                No documents detected yet.
+                            </div>
+                        )}
+                    </>
                 ) : (
-                    <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
-                        No documents detected yet.
-                    </div>
+                    <JsonViewer data={job} title={`File ${job.fileName} RAW Content`} />
                 )}
             </div>
 

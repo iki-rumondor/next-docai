@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { StatusBadge, Status } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
 import { Progress } from "@/shared/components/ui/progress";
+import { JsonViewer } from "./JsonViewer";
 import { Document } from "../model/documents.schema";
 import { useJobs } from "../hooks/useJobs";
 
@@ -17,6 +18,7 @@ interface DocumentCardProps {
 export const DocumentCard = ({ document }: DocumentCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [retryOpen, setRetryOpen] = useState(false);
+    const [activeView, setActiveView] = useState<'visual' | 'json'>('visual');
     const { retryJob, isRetrying } = useJobs();
 
     const handleRetryConfirm = () => {
@@ -84,52 +86,77 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
 
                 {isOpen && (
                     <div className="border-t border-border/40 p-6 space-y-6">
-                        {document.fields && document.fields.length > 0 && (
-                            <div>
-                                <h4 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-                                    Extracted Fields
-                                </h4>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {document.fields.map((field, idx) => (
-                                        <div key={idx} className="rounded-xl bg-muted/40 p-4">
-                                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{field.key}</p>
-                                            <p className="text-sm font-semibold text-foreground mt-1">{field.value}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <div className="flex items-center gap-2 p-1 bg-muted/30 rounded-xl w-fit mb-4">
+                            <Button
+                                variant={activeView === 'visual' ? 'secondary' : 'ghost'}
+                                size="sm"
+                                className="rounded-lg h-8 text-xs px-3"
+                                onClick={() => setActiveView('visual')}
+                            >
+                                Visual Data
+                            </Button>
+                            <Button
+                                variant={activeView === 'json' ? 'secondary' : 'ghost'}
+                                size="sm"
+                                className="rounded-lg h-8 text-xs px-3"
+                                onClick={() => setActiveView('json')}
+                            >
+                                Raw JSON
+                            </Button>
+                        </div>
 
-                        {document.items && document.items.length > 0 && (
-                            <div>
-                                <h4 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-                                    Line Items
-                                </h4>
-                                <div className="rounded-xl border border-border/50 overflow-hidden overflow-x-auto">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow className="bg-muted/30 hover:bg-muted/30">
-                                                {Object.keys(document.items[0]).map((key) => (
-                                                    <TableHead key={key} className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground py-3">
-                                                        {key}
-                                                    </TableHead>
-                                                ))}
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {document.items.map((item, idx) => (
-                                                <TableRow key={idx} className="hover:bg-accent/30 border-b border-border/30 last:border-0">
-                                                    {Object.values(item).map((val, vIdx) => (
-                                                        <TableCell key={vIdx} className="text-[13px] py-3.5 whitespace-nowrap">
-                                                            {String(val)}
-                                                        </TableCell>
-                                                    ))}
-                                                </TableRow>
+                        {activeView === 'visual' ? (
+                            <>
+                                {document.fields && document.fields.length > 0 && (
+                                    <div>
+                                        <h4 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+                                            Extracted Fields
+                                        </h4>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                            {document.fields.map((field, idx) => (
+                                                <div key={idx} className="rounded-xl bg-muted/40 p-4">
+                                                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{field.key}</p>
+                                                    <p className="text-sm font-semibold text-foreground mt-1">{field.value}</p>
+                                                </div>
                                             ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {document.items && document.items.length > 0 && (
+                                    <div>
+                                        <h4 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+                                            Line Items
+                                        </h4>
+                                        <div className="rounded-xl border border-border/50 overflow-hidden overflow-x-auto">
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow className="bg-muted/30 hover:bg-muted/30">
+                                                        {Object.keys(document.items[0]).map((key) => (
+                                                            <TableHead key={key} className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground py-3">
+                                                                {key}
+                                                            </TableHead>
+                                                        ))}
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {document.items.map((item, idx) => (
+                                                        <TableRow key={idx} className="hover:bg-accent/30 border-b border-border/30 last:border-0">
+                                                            {Object.values(item).map((val, vIdx) => (
+                                                                <TableCell key={vIdx} className="text-[13px] py-3.5 whitespace-nowrap">
+                                                                    {String(val)}
+                                                                </TableCell>
+                                                            ))}
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <JsonViewer data={document} title={`${documentType} Payload`} />
                         )}
                     </div>
                 )}
