@@ -37,6 +37,7 @@ export const documentSchema = z.object({
   start_page: z.number().optional(),
   end_page: z.number().optional(),
   status: z.string().optional(),
+  progress: z.number().optional(),
   fields: z.array(documentFieldSchema).optional(),
   items: z.array(documentItemSchema).optional(),
 });

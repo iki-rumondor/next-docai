@@ -4,6 +4,7 @@ import { Clock, FileText, Layers, RotateCcw } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { RetryModal } from '@/shared/components/RetryModal';
+import { Progress } from '@/shared/components/ui/progress';
 import { useDocuments, DocumentCard, Document } from '@/features/documents';
 import { SourceFile } from '../model/files.schema';
 import { useFiles } from '../hooks/useFiles';
@@ -65,6 +66,16 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                         )}
                     </div>
                 </div>
+
+                {job.status === "processing" && (
+                    <div className="mt-6 space-y-2">
+                        <div className="flex justify-between text-xs font-medium">
+                            <span className="text-muted-foreground italic">Processing file...</span>
+                            <span className="text-primary">{Math.round(job.progress)}%</span>
+                        </div>
+                        <Progress value={job.progress} className="h-1.5" />
+                    </div>
+                )}
             </div>
 
             <div className="space-y-4">

@@ -4,8 +4,9 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
-import { StatusBadge } from "@/shared/components/StatusBadge";
+import { StatusBadge, Status } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
+import { Progress } from "@/shared/components/ui/progress";
 import { Document } from "../model/documents.schema";
 import { useJobs } from "../hooks/useJobs";
 
@@ -53,7 +54,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <StatusBadge status={status as "queued" | "processing" | "completed" | "failed"} />
+                        <StatusBadge status={status as Status} />
                         {status === "failed" && (
                             <Button
                                 variant="ghost"
@@ -70,6 +71,16 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                         )}
                     </div>
                 </div>
+
+                {status === "extracting" && (
+                    <div className="px-6 pb-6 space-y-2">
+                        <div className="flex justify-between text-[10px] font-medium">
+                            <span className="text-muted-foreground italic uppercase tracking-wider">Extracting data...</span>
+                            <span className="text-primary">{Math.round(document.progress || 0)}%</span>
+                        </div>
+                        <Progress value={document.progress} className="h-1" color="primary" />
+                    </div>
+                )}
 
                 {isOpen && (
                     <div className="border-t border-border/40 p-6 space-y-6">

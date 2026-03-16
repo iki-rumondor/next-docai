@@ -4,10 +4,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { jobsService } from '../api/jobs.service';
 import { toast } from 'sonner';
 import { ApiError } from '@/shared/lib/api-error';
+import { mockSocketService } from '@/shared/lib/mock-socket';
 
 export const useJobs = () => {
     const queryClient = useQueryClient();
     const isMock = process.env.NEXT_PUBLIC_MOCK_API === 'true';
+    const { simulateJobProgress } = mockSocketService(queryClient) || {};
 
     const retryJobMutation = useMutation({
         mutationFn: async (id: string) => {
@@ -20,9 +22,16 @@ export const useJobs = () => {
             }
             return jobsService.retry(id);
         },
-        onSuccess: (res) => {
+        onSuccess: (res, jobId) => {
             // Invalidate documents to show updated status
             queryClient.invalidateQueries({ queryKey: ['documents'] });
+
+            if (isMock && simulateJobProgress) {
+                // In mock, we don't have docId easily here, but simulateJobProgress 
+                // in my mock-socket.ts can handle by jobId too if we match it.
+                simulateJobProgress(jobId, ''); 
+            }
+
             const message = res.meta.message || 'Job retry triggered successfully';
             toast.success(message);
         },

@@ -8,6 +8,7 @@ import { mockJobs } from '@/data/mockData';
 
 import { ApiError } from '@/shared/lib/api-error';
 import { SourceFileStatus } from '../model/files.schema';
+import { mockSocketService } from '@/shared/lib/mock-socket';
 
 // Helper to convert mockJobs to SourceFile type if needed
 const mapMockToSourceFile = (job: typeof mockJobs[0]): SourceFile => ({
@@ -23,6 +24,7 @@ const mapMockToSourceFile = (job: typeof mockJobs[0]): SourceFile => ({
 export const useFiles = () => {
   const queryClient = useQueryClient();
   const isMock = process.env.NEXT_PUBLIC_MOCK_API === 'true';
+  const { simulateFileProgress } = mockSocketService(queryClient) || {};
 
   const useFileList = (query?: ListFilesQuery) => {
     return useQuery({
@@ -81,8 +83,13 @@ export const useFiles = () => {
       }
       return filesService.retry(id);
     },
-    onSuccess: (res) => {
+    onSuccess: (res, id) => {
       queryClient.invalidateQueries({ queryKey: ['source-files'] });
+      
+      if (isMock && simulateFileProgress) {
+        simulateFileProgress(id);
+      }
+
       const message = res.meta.message || 'Retry triggered';
       toast.success(message);
     },
