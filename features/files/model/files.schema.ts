@@ -1,22 +1,27 @@
 import { z } from 'zod';
+import { FILE_STATUSES } from '../constants/file-status';
 
-export const sourceFileStatusSchema = z.enum([
-  'queued',
-  'processing',
-  'completed',
-  'failed',
-]);
+export const sourceFileStatusSchema = z.enum(FILE_STATUSES);
 
 export type SourceFileStatus = z.infer<typeof sourceFileStatusSchema>;
 
 export const sourceFileSchema = z.object({
   id: z.string(),
-  fileName: z.string(),
-  pages: z.number(),
+  file_name: z.string(),
+  file_path: z.string(),
+  mime_type: z.string(),
+  page_count: z.number(),
   status: sourceFileStatusSchema,
   progress: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string().optional(),
+  error_message: z.string().nullable(),
+  created_at: z.string(),
+  updated_at: z.string().nullable(),
+  uploaded_by: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
+    role: z.string(),
+  }).optional(),
 });
 
 export type SourceFile = z.infer<typeof sourceFileSchema>;
@@ -36,3 +41,16 @@ export const listFilesQuerySchema = z.object({
 });
 
 export type ListFilesQuery = z.infer<typeof listFilesQuerySchema>;
+
+/**
+ * Specifically for the List Files API as requested by user
+ */
+export interface ListFilesData {
+  data: SourceFile[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}

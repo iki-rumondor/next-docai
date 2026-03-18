@@ -1,13 +1,14 @@
 import { apiClient } from '@/shared/api/axios';
-import { ApiResponse, PaginatedApiResponse } from '@/shared/types/api-response';
+import { ApiResponse } from '@/shared/types/api-response';
 import { 
   SourceFile, 
-  ListFilesQuery 
+  ListFilesQuery,
+  ListFilesData
 } from '../model/files.schema';
 
 export const filesService = {
-  list: async (query?: ListFilesQuery): Promise<PaginatedApiResponse<SourceFile>> => {
-    const { data } = await apiClient.get<PaginatedApiResponse<SourceFile>>('/source-files', {
+  list: async (query?: ListFilesQuery): Promise<ApiResponse<ListFilesData>> => {
+    const { data } = await apiClient.get<ApiResponse<ListFilesData>>('/source-files', {
       params: query,
     });
     return data;

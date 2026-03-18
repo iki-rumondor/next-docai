@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react'
-import { Clock, FileText, Layers, RotateCcw } from 'lucide-react';
+import { AlertCircle, Clock, FileText, Layers, RotateCcw } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { RetryModal } from '@/shared/components/RetryModal';
@@ -26,7 +26,17 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
         });
     };
 
-    const documents = documentsData?.data?.items || [];
+    const parseErrorMessage = (errorMsg: string | null) => {
+        if (!errorMsg) return "An unknown error occurred processing this file.";
+        try {
+            const parsed = JSON.parse(errorMsg);
+            return parsed.error?.message || parsed.message || errorMsg;
+        } catch {
+            return errorMsg;
+        }
+    };
+
+    const documents = documentsData?.data?.data || [];
 
     return (
         <>
@@ -38,17 +48,17 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                                 <FileText className="h-5 w-5 text-primary" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold text-foreground">{job.fileName}</h1>
+                                <h1 className="text-xl font-bold text-foreground">{job.file_name}</h1>
                                 <p className="text-sm text-muted-foreground font-mono">{job.id}</p>
                             </div>
                         </div>
 
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1.5">
-                                <Clock className="h-3.5 w-3.5" /> {job.createdAt}
+                                <Clock className="h-3.5 w-3.5" /> {job.created_at}
                             </span>
                             <span className="flex items-center gap-1.5">
-                                <Layers className="h-3.5 w-3.5" /> {job.pages} pages
+                                <Layers className="h-3.5 w-3.5" /> {job.page_count} pages
                             </span>
                         </div>
                     </div>
@@ -75,6 +85,20 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                             <span className="text-primary">{Math.round(job.progress)}%</span>
                         </div>
                         <Progress value={job.progress} className="h-1.5" />
+                    </div>
+                )}
+
+                {job.status === "failed" && job.error_message && (
+                    <div className="mt-6 p-4 rounded-xl bg-destructive/5 border border-destructive/20 text-destructive animate-fade-in">
+                        <div className="flex items-start gap-3">
+                            <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-bold">Processing Failed</p>
+                                <p className="text-sm opacity-90 leading-relaxed italic border-l-2 border-destructive/20 pl-3 py-1">
+                                    {parseErrorMessage(job.error_message)}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
@@ -120,7 +144,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                         )}
                     </>
                 ) : (
-                    <JsonViewer data={job} title={`File ${job.fileName} RAW Content`} />
+                    <JsonViewer data={job} title={`File ${job.file_name} RAW Content`} />
                 )}
             </div>
 
@@ -128,7 +152,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                 open={retryOpen}
                 onOpenChange={setRetryOpen}
                 title="Retry Failed Pages"
-                description={`This will re-process all failed pages in ${job.fileName}. Are you sure?`}
+                description={`This will re-process all failed pages in ${job.file_name}. Are you sure?`}
                 onConfirm={handleRetryFile}
                 isLoading={isRetryingFile}
             />

@@ -1,101 +1,39 @@
-'use client';
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { filesService } from '../api/files.service';
-import { ListFilesQuery, SourceFile } from '../model/files.schema';
-import { toast } from 'sonner';
-import { mockJobs } from '@/data/mockData';
-
-import { ApiError } from '@/shared/lib/api-error';
-import { SourceFileStatus } from '../model/files.schema';
-import { mockSocketService } from '@/shared/lib/mock-socket';
-
-// Helper to convert mockJobs to SourceFile type if needed
-const mapMockToSourceFile = (job: typeof mockJobs[0]): SourceFile => ({
-  id: job.id,
-  fileName: job.fileName,
-  pages: job.pages,
-  status: job.status as SourceFileStatus,
-  progress: job.progress,
-  createdAt: job.createdAt,
-  updatedAt: job.createdAt,
-});
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { filesService } from "../api/files.service";
+import { ListFilesQuery } from "../model/files.schema";
+import { toast } from "sonner";
+import { ApiError } from "@/shared/lib/api-error";
 
 export const useFiles = () => {
   const queryClient = useQueryClient();
-  const isMock = process.env.NEXT_PUBLIC_MOCK_API === 'true';
-  const { simulateFileProgress } = mockSocketService(queryClient) || {};
 
   const useFileList = (query?: ListFilesQuery) => {
     return useQuery({
-      queryKey: ['source-files', query],
-      queryFn: async () => {
-        if (isMock) {
-          await new Promise(resolve => setTimeout(resolve, 800));
-          let filtered = [...mockJobs];
-          if (query?.status && query.status !== 'all') {
-            filtered = filtered.filter(j => j.status === query.status);
-          }
-          
-          return {
-            data: {
-              items: filtered.map(mapMockToSourceFile),
-              total: filtered.length,
-              page: query?.page || 1,
-              limit: query?.limit || 10,
-              totalPages: 1
-            },
-            meta: { success: true }
-          };
-        }
-        return filesService.list(query);
-      },
+      queryKey: ["source-files", query],
+      queryFn: () => filesService.list(query),
     });
   };
 
   const useFileDetail = (id: string) => {
     return useQuery({
-      queryKey: ['source-files', id],
-      queryFn: async () => {
-        if (isMock) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const file = mockJobs.find(j => j.id === id);
-          if (!file) throw new Error('File not found');
-          return {
-            data: mapMockToSourceFile(file),
-            meta: { success: true }
-          };
-        }
-        return filesService.getById(id);
-      },
+      queryKey: ["source-files", id],
+      queryFn: () => filesService.getById(id),
       enabled: !!id,
     });
   };
 
   const retryMutation = useMutation({
-    mutationFn: async (id: string) => {
-      if (isMock) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return {
-          data: { id, status: 'processing' },
-          meta: { success: true, message: 'Retry triggered (Mock)' }
-        };
-      }
-      return filesService.retry(id);
-    },
-    onSuccess: (res, id) => {
-      queryClient.invalidateQueries({ queryKey: ['source-files'] });
-      
-      if (isMock && simulateFileProgress) {
-        simulateFileProgress(id);
-      }
-
-      const message = res.meta.message || 'Retry triggered';
+    mutationFn: (id: string) => filesService.retry(id),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["source-files"] });
+      const message = res.meta?.message || "Retry triggered";
       toast.success(message);
     },
     onError: (err: ApiError) => {
-      toast.error('Retry failed', { description: err.message });
-    }
+      toast.error("Retry failed", { description: err.message });
+    },
   });
 
   return {

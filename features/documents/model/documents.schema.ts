@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { sourceFileSchema } from '@/features/files/model/files.schema';
 
 export const vendorSchema = z.object({
   id: z.string(),
@@ -30,14 +29,21 @@ export type DocumentItem = z.infer<typeof documentItemSchema>;
 
 export const documentSchema = z.object({
   id: z.string(),
-  job_id: z.string().optional(),
-  source_file: sourceFileSchema.optional(),
+  job_id: z.string(),
+  source_file: z.object({
+    id: z.string(),
+    file_name: z.string(),
+  }).optional(),
   document_type: documentTypeSchema.optional(),
   vendor: vendorSchema.optional(),
-  start_page: z.number().optional(),
-  end_page: z.number().optional(),
-  status: z.string().optional(),
-  progress: z.number().optional(),
+  start_page: z.number(),
+  end_page: z.number(),
+  status: z.string(),
+  confidence: z.string().optional(),
+  needs_review: z.boolean().optional(),
+  error_message: z.string().nullable().optional(),
+  created_at: z.string(),
+  updated_at: z.string().nullable().optional(),
   fields: z.array(documentFieldSchema).optional(),
   items: z.array(documentItemSchema).optional(),
 });
@@ -51,3 +57,16 @@ export const listDocumentsQuerySchema = z.object({
 });
 
 export type ListDocumentsQuery = z.infer<typeof listDocumentsQuerySchema>;
+
+/**
+ * Specifically for the List Documents API as requested by user
+ */
+export interface ListDocumentsData {
+  data: Document[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}

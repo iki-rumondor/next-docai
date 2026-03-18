@@ -21,6 +21,18 @@ export interface LoginResponse {
   };
   data: {
     token: string;
+    refreshToken: string;
     user: AuthUser;
+  };
+}
+
+export interface RefreshTokenResponse {
+  meta: {
+    success: boolean;
+    message: string;
+  };
+  data: {
+    token: string;
+    refreshToken: string;
   };
 }

@@ -2,13 +2,20 @@
 
 import { FilesTable, useFiles } from "@/features/files";
 import { StatCard } from "@/shared/components/StatCard";
-import { mockJobs } from "@/data/mockData";
 import { AlertTriangle, CheckCircle, Cpu, FileCheck, Info, Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
     const { useFileList } = useFiles();
-    const { data: filesData, isLoading } = useFileList({ status: 'processing' });
-    const processingJobs = filesData?.data?.items || [];
+    
+    // Fetch jobs for different statuses to get counts
+    const { data: processingData, isLoading: isProcessingLoading } = useFileList({ status: 'processing' });
+    const { data: completedData } = useFileList({ status: 'completed' });
+    const { data: failedData } = useFileList({ status: 'failed' });
+    
+    const processingJobs = processingData?.data?.data || [];
+    const processingCount = processingData?.data?.pagination.total || 0;
+    const completedCount = completedData?.data?.pagination.total || 0;
+    const failedCount = failedData?.data?.pagination.total || 0;
 
     return (
         <div className="space-y-10 animate-fade-in">
@@ -20,26 +27,26 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <StatCard
                     title="Processed Today"
-                    value={142}
+                    value={completedCount + failedCount}
                     icon={FileCheck}
                     trend="+12% from yesterday"
                     variant="primary"
                 />
                 <StatCard
                     title="Currently Processing"
-                    value={processingJobs.length}
+                    value={processingCount}
                     icon={Cpu}
                     variant="info"
                 />
                 <StatCard
                     title="Completed Jobs"
-                    value={mockJobs.filter(j => j.status === 'completed').length}
+                    value={completedCount}
                     icon={CheckCircle}
                     variant="success"
                 />
                 <StatCard
                     title="Failed Jobs"
-                    value={mockJobs.filter(j => j.status === 'failed').length}
+                    value={failedCount}
                     icon={AlertTriangle}
                     variant="destructive"
                 />
@@ -47,7 +54,7 @@ export default function DashboardPage() {
 
             <div>
                 <h2 className="text-lg font-semibold text-foreground mb-5">Files in Processing</h2>
-                {isLoading ? (
+                {isProcessingLoading ? (
                     <div className="flex flex-col items-center justify-center p-12 bg-muted/5 border border-border/40 rounded-2xl text-center">
                         <Loader2 className="h-8 w-8 text-primary animate-spin mb-3" />
                         <p className="text-sm text-muted-foreground">Updating processing status...</p>

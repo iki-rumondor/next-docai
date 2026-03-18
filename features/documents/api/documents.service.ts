@@ -1,13 +1,14 @@
 import { apiClient } from '@/shared/api/axios';
-import { ApiResponse, PaginatedApiResponse } from '@/shared/types/api-response';
+import { ApiResponse } from '@/shared/types/api-response';
 import { 
   Document, 
-  ListDocumentsQuery 
+  ListDocumentsQuery,
+  ListDocumentsData 
 } from '../model/documents.schema';
 
 export const documentsService = {
-  list: async (query?: ListDocumentsQuery): Promise<PaginatedApiResponse<Document>> => {
-    const { data } = await apiClient.get<PaginatedApiResponse<Document>>('/documents', {
+  list: async (query?: ListDocumentsQuery): Promise<ApiResponse<ListDocumentsData>> => {
+    const { data } = await apiClient.get<ApiResponse<ListDocumentsData>>('/documents', {
       params: query,
     });
     return data;

@@ -229,6 +229,10 @@
   .badge-red {
     @apply bg-red-50 text-red-700! dark:bg-red-950 dark:text-red-300!;
   }
+
+  .badge-yellow {
+    @apply bg-yellow-50 text-yellow-700! dark:bg-yellow-950 dark:text-yellow-300!;
+  }
 }
 
 @layer base {

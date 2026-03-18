@@ -2,24 +2,31 @@
 
 import { Input } from "@/shared/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
-import { mockJobs } from "@/data/mockData";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { FilesTable } from "@/features/files";
+import { FILE_STATUS_CONFIG, FILE_STATUSES } from "@/features/files/constants/file-status";
+import { FilesTable, useFiles, SourceFile } from "@/features/files";
 
 export default function FilesPage() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
 
+    const { useFileList } = useFiles();
+    const { data: fileData, isLoading } = useFileList({ 
+        status: statusFilter === "all" ? undefined : statusFilter 
+    });
+
     const filteredJobs = useMemo(() => {
-        return mockJobs.filter((job) => {
+        const jobs = fileData?.data.data || [];
+        return jobs.filter((job: SourceFile) => {
             const matchesSearch =
-                job.fileName.toLowerCase().includes(search.toLowerCase()) ||
+                job.file_name.toLowerCase().includes(search.toLowerCase()) ||
                 job.id.toLowerCase().includes(search.toLowerCase());
-            const matchesStatus = statusFilter === "all" || job.status === statusFilter;
-            return matchesSearch && matchesStatus;
+            return matchesSearch;
         });
-    }, [search, statusFilter]);
+    }, [fileData, search]);
+
+    if (isLoading) return <div className="text-center py-20">Loading files...</div>;
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -44,10 +51,11 @@ export default function FilesPage() {
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                         <SelectItem value="all">All Statuses</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="processing">Processing</SelectItem>
-                        <SelectItem value="queued">Queued</SelectItem>
-                        <SelectItem value="failed">Failed</SelectItem>
+                        {FILE_STATUSES.map((status) => (
+                            <SelectItem key={status} value={status}>
+                                {FILE_STATUS_CONFIG[status].label}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>
