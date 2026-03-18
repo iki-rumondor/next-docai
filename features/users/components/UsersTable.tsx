@@ -111,14 +111,6 @@ export const UsersTable = () => {
           );
         },
       }),
-      columnHelper.accessor("lastLogin", {
-        header: "Last Login",
-        cell: (info) => (
-          <span className="text-[13px] text-muted-foreground">
-            {info.getValue()}
-          </span>
-        ),
-      }),
       columnHelper.display({
         id: "actions",
         header: () => <div className="text-right">Actions</div>,

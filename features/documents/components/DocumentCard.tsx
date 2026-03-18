@@ -9,7 +9,7 @@ import { RetryModal } from "@/shared/components/RetryModal";
 import { JsonViewer } from "./JsonViewer";
 import { Document } from "../model/documents.schema";
 import { useDocuments } from "../hooks/useDocuments";
-import { useFiles } from "../../files/hooks/useFiles";
+import { useJobs } from "../hooks/useJobs";
 
 interface DocumentCardProps {
     document: Document;
@@ -22,11 +22,11 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
     
     const { useDocumentDetail } = useDocuments();
     const { data: detailResponse, isLoading: isDetailLoading } = useDocumentDetail(isOpen ? document.id : "");
-    const { retry: retryFile, isRetrying: isRetryingFile } = useFiles();
+    const { retryJob, isRetrying } = useJobs();
 
     const handleRetryConfirm = () => {
         if (document.job_id) {
-            retryFile(document.job_id, {
+            retryJob(document.job_id, {
                 onSuccess: () => {
                     setRetryOpen(false);
                 }
@@ -178,7 +178,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                 title={`Retry ${documentType}`}
                 description={`This will re-process the ${documentType} from ${vendor}. Are you sure?`}
                 onConfirm={handleRetryConfirm}
-                isLoading={isRetryingFile}
+                isLoading={isRetrying}
             />
         </>
     );

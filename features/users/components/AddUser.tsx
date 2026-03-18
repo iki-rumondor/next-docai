@@ -7,6 +7,7 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
+  DialogDescription,
   DialogTrigger,
   DialogFooter
 } from '@/shared/components/ui/dialog';
@@ -54,6 +55,9 @@ export const AddUser = () => {
             <DialogContent className="sm:max-w-[425px] rounded-2xl">
                 <DialogHeader>
                     <DialogTitle>Create New User</DialogTitle>
+                    <DialogDescription>
+                        Fill in the required information to create a new user account.
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-5 py-4">
                     <div className="space-y-2">

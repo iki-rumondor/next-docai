@@ -7,6 +7,7 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle,
+  DialogDescription,
   DialogFooter
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
@@ -63,6 +64,9 @@ export const EditUserModal = ({ user, open, onOpenChange }: EditUserModalProps) 
             <DialogContent className="sm:max-w-[425px] rounded-2xl">
                 <DialogHeader>
                     <DialogTitle>Edit User</DialogTitle>
+                    <DialogDescription>
+                        Make changes to the user&apos;s information here. Click save when you&apos;re done.
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-5 py-4">
                     <div className="space-y-2">

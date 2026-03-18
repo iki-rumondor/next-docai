@@ -49,7 +49,10 @@ const TopNavigation = () => {
 
           {/* Nav Links - centered */}
           <div className="flex-1 flex items-center justify-center gap-0.5">
-            {NAVIGATION_CONFIG.map((item) => {
+            {NAVIGATION_CONFIG.filter((item) => {
+              if (item.to === "/users" && user?.role !== "admin") return false;
+              return true;
+            }).map((item) => {
               const isActive =
                 pathname === item.to || pathname.startsWith(item.to + "/");
               return (
