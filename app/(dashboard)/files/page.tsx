@@ -3,21 +3,30 @@
 import { Input } from "@/shared/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FILE_STATUS_CONFIG, FILE_STATUSES } from "@/features/files/constants/file-status";
 import { FilesTable, useFiles, SourceFile } from "@/features/files";
 
 export default function FilesPage() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
+    const [page, setPage] = useState(1);
 
     const { useFileList } = useFiles();
     const { data: fileData, isLoading } = useFileList({ 
-        status: statusFilter === "all" ? undefined : statusFilter 
+        status: statusFilter === "all" ? undefined : statusFilter,
+        page,
+        limit: 5
     });
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setPage(1);
+    }, [search, statusFilter]);
 
     const filteredJobs = useMemo(() => {
         const jobs = fileData?.data.data || [];
+        if (!search) return jobs;
         return jobs.filter((job: SourceFile) => {
             const matchesSearch =
                 job.file_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -25,6 +34,8 @@ export default function FilesPage() {
             return matchesSearch;
         });
     }, [fileData, search]);
+
+    const pagination = fileData?.data.pagination;
 
     if (isLoading) return <div className="text-center py-20">Loading files...</div>;
 
@@ -61,7 +72,11 @@ export default function FilesPage() {
             </div>
 
             {filteredJobs.length > 0 ? (
-                <FilesTable jobs={filteredJobs} />
+                <FilesTable 
+                    jobs={filteredJobs} 
+                    pagination={pagination} 
+                    onPageChange={setPage} 
+                />
             ) : (
                 <div className="text-center py-16 rounded-xl border border-border/60 bg-card shadow-card">
                     <p className="text-muted-foreground">No files found matching your filters.</p>
