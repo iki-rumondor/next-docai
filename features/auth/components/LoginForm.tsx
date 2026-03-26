@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Cpu, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -8,10 +8,9 @@ import { Label } from "@/shared/components/ui/label";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { useAuth } from "../hooks/useAuth";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
-export const LoginForm = () => {
+const LoginFormContent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -130,3 +129,10 @@ export const LoginForm = () => {
     </div>
   );
 };
+
+export const LoginForm = () => (
+  <Suspense fallback={<div className="w-full max-w-md p-8 text-center">Loading...</div>}>
+    <LoginFormContent />
+  </Suspense>
+);
+
