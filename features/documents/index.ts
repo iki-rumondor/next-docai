@@ -6,3 +6,4 @@ export * from './api/documents.service';
 export * from './api/jobs.service';
 export * from './hooks/useDocuments';
 export * from './hooks/useJobs';
+export * from './hooks/useDocumentSync';
