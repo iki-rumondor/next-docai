@@ -8,11 +8,26 @@ import { Progress } from '@/shared/components/ui/progress';
 import { useDocuments, DocumentCard, Document, JsonViewer } from '@/features/documents';
 import { SourceFile } from '../model/files.schema';
 import { useFiles } from '../hooks/useFiles';
+import { useSourceFileSync } from '../hooks/useSourceFileSync';
+import { FILE_STATUSES, FILE_STATUS_CONFIG } from '../constants/file-status';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 
 export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
-    const { useDocumentsList } = useDocuments({ source_file_id: job.id });
+    const [page, setPage] = useState(1);
+    const [status, setStatus] = useState<string>("all");
+    
+    const { useDocumentsList } = useDocuments({ 
+        source_file_id: job.id,
+        page,
+        limit: 10,
+        status: status === "all" ? undefined : status
+    });
     const { data: documentsData, isLoading } = useDocumentsList();
     const { retry: retryFile, isRetrying: isRetryingFile } = useFiles();
+    
+    // Sync file progress/status via SSE
+    useSourceFileSync(job.id);
     
     const [retryOpen, setRetryOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'documents' | 'json'>('documents');
@@ -104,23 +119,47 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
             </div>
 
             <div className="space-y-6">
-                <div className="flex items-center gap-2 p-1 bg-muted/30 rounded-xl w-fit">
-                    <Button
-                        variant={activeTab === 'documents' ? 'secondary' : 'ghost'}
-                        size="sm"
-                        className="rounded-lg h-9 text-sm px-4"
-                        onClick={() => setActiveTab('documents')}
-                    >
-                        Detected Documents ({isLoading ? "..." : documents.length})
-                    </Button>
-                    <Button
-                        variant={activeTab === 'json' ? 'secondary' : 'ghost'}
-                        size="sm"
-                        className="rounded-lg h-9 text-sm px-4"
-                        onClick={() => setActiveTab('json')}
-                    >
-                        File Payload (JSON)
-                    </Button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 p-1 bg-muted/30 rounded-xl w-fit">
+                        <Button
+                            variant={activeTab === 'documents' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="rounded-lg h-9 text-sm px-4"
+                            onClick={() => setActiveTab('documents')}
+                        >
+                            Detected Documents ({isLoading ? "..." : documentsData?.data?.pagination?.total || 0})
+                        </Button>
+                        <Button
+                            variant={activeTab === 'json' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="rounded-lg h-9 text-sm px-4"
+                            onClick={() => setActiveTab('json')}
+                        >
+                            File Payload (JSON)
+                        </Button>
+                    </div>
+
+                    {activeTab === 'documents' && (
+                        <div className="flex items-center gap-2">
+                            <Select value={status} onValueChange={(val) => {
+                                setStatus(val);
+                                setPage(1);
+                            }}>
+                                <SelectTrigger className="h-9 w-[160px] rounded-xl bg-card">
+                                    <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                                    <SelectValue placeholder="All Status" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                  <SelectItem value="all">All Status</SelectItem>
+                                    {FILE_STATUSES.map((s) => (
+                                        <SelectItem key={s} value={s}>
+                                            {FILE_STATUS_CONFIG[s].label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
                 </div>
                 
                 {activeTab === 'documents' ? (
@@ -132,14 +171,44 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                                 ))}
                             </div>
                         ) : documents.length > 0 ? (
-                            <div className="space-y-3">
-                                {documents.map((doc: Document) => (
-                                    <DocumentCard key={doc.id} document={doc} />
-                                ))}
+                            <div className="space-y-4">
+                                <div className="space-y-3">
+                                    {documents.map((doc: Document) => (
+                                        <DocumentCard key={doc.id} document={doc} />
+                                    ))}
+                                </div>
+                                
+                                {documentsData?.data?.pagination && documentsData.data.pagination.total_pages > 1 && (
+                                    <div className="flex items-center justify-between px-2 py-2">
+                                        <p className="text-[13px] text-muted-foreground">
+                                            Page <span className="font-medium text-foreground">{page}</span> of <span className="font-medium text-foreground">{documentsData.data.pagination.total_pages}</span>
+                                        </p>
+                                        <div className="flex items-center space-x-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-8 w-8 p-0 rounded-lg"
+                                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                                disabled={page <= 1}
+                                            >
+                                                <ChevronLeft className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-8 w-8 p-0 rounded-lg"
+                                                onClick={() => setPage(p => Math.min(documentsData.data.pagination.total_pages, p + 1))}
+                                                disabled={page >= documentsData.data.pagination.total_pages}
+                                            >
+                                                <ChevronRight className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
-                                No documents detected yet.
+                                No documents detected {status !== "all" ? `with status "${status}"` : "yet"}.
                             </div>
                         )}
                     </>

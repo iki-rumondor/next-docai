@@ -1,10 +1,9 @@
 export const FILE_STATUSES = [
   'uploaded',
-  'queued',
   'processing',
-  'extracting',
   'completed',
   'failed',
+  'pending_review',
 ] as const;
 
 export type FileStatus = (typeof FILE_STATUSES)[number];
@@ -14,16 +13,8 @@ export const FILE_STATUS_CONFIG: Record<FileStatus, { label: string; color: stri
     label: "Uploaded", 
     color: "badge-blue" 
   },
-  queued: { 
-    label: "Queued", 
-    color: "badge-yellow" 
-  },
   processing: { 
     label: "Processing", 
-    color: "badge-blue" 
-  },
-  extracting: { 
-    label: "Extracting", 
     color: "badge-blue" 
   },
   completed: { 
@@ -33,5 +24,9 @@ export const FILE_STATUS_CONFIG: Record<FileStatus, { label: string; color: stri
   failed: { 
     label: "Failed", 
     color: "badge-red" 
+  },
+  pending_review: { 
+    label: "Pending Review", 
+    color: "badge-yellow" 
   },
 };

@@ -10,6 +10,7 @@ import { JsonViewer } from "./JsonViewer";
 import { Document } from "../model/documents.schema";
 import { useDocuments } from "../hooks/useDocuments";
 import { useJobs } from "../hooks/useJobs";
+import { useDocumentSync } from "../hooks/useDocumentSync";
 
 interface DocumentCardProps {
     document: Document;
@@ -23,6 +24,9 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
     const { useDocumentDetail } = useDocuments();
     const { data: detailResponse, isLoading: isDetailLoading } = useDocumentDetail(isOpen ? document.id : "");
     const { retryJob, isRetrying } = useJobs();
+    
+    // Sync document status via SSE
+    useDocumentSync(document.id);
 
     const handleRetryConfirm = () => {
         if (document.job_id) {

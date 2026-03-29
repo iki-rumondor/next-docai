@@ -15,10 +15,12 @@ interface UseSSEOptions<T> {
   onOpen?: (event: Event) => void;
   /** Whether the connection should be active. */
   enabled?: boolean;
+  /** Authentication token to append as query parameter. */
+  token?: string;
 }
 
 export const useSSE = <T>(url: string | null, options: UseSSEOptions<T> = {}) => {
-  const { onMessage, onError, onOpen, enabled = true } = options;
+  const { onMessage, onError, onOpen, enabled = true, token } = options;
   const eventSourceRef = useRef<EventSource | null>(null);
   const [lastMessage, setLastMessage] = useState<T | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -28,9 +30,16 @@ export const useSSE = <T>(url: string | null, options: UseSSEOptions<T> = {}) =>
       return;
     }
 
+    // Handle the URL construction with token safely
+    let finalUrl = url;
+    if (token) {
+      const separator = url.includes('?') ? '&' : '?';
+      finalUrl = `${url}${separator}token=${token}`;
+    }
+
     // Initialize EventSource
     // withCredentials is required to send cookies (like auth_token) to the server
-    const eventSource = new EventSource(url, { withCredentials: true });
+    const eventSource = new EventSource(finalUrl, { withCredentials: true });
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = (event) => {
@@ -59,7 +68,7 @@ export const useSSE = <T>(url: string | null, options: UseSSEOptions<T> = {}) =>
       eventSourceRef.current = null;
       setIsConnected(false);
     };
-  }, [url, enabled, onMessage, onError, onOpen]);
+  }, [url, enabled, onMessage, onError, onOpen, token]);
 
   return { 
     lastMessage, 

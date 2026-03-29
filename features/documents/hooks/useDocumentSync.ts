@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSSE } from "@/shared/hooks/use-sse";
 import { ApiResponse } from "@/shared/types/api-response";
 import { Document } from "../model/documents.schema";
+import { getCookie } from "@/shared/lib/cookies";
 
 /**
  * Hook to sync document status and progress via SSE.
@@ -16,6 +17,7 @@ export const useDocumentSync = (documentId: string | null) => {
     ? `${baseUrl}/documents/${documentId}/stream` 
     : null;
 
+/*
   useSSE(streamUrl, {
     onMessage: (data: { status: string }) => {
       // In-place update for React Query cache to avoid full refetch
@@ -34,5 +36,7 @@ export const useDocumentSync = (documentId: string | null) => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
     enabled: !!documentId,
+    token: getCookie('auth_token'),
   });
+*/
 };
