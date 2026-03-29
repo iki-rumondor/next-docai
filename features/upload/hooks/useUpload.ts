@@ -10,9 +10,27 @@ export const useUpload = () => {
   const isMock = process.env.NEXT_PUBLIC_MOCK_API === "true";
 
   const uploadMutation = useMutation({
-    mutationFn: async ({ file, pages }: { file: File; pages?: string }) => {
+    mutationFn: async ({ 
+      file, 
+      pages, 
+      onProgress 
+    }: { 
+      file: File; 
+      pages?: string; 
+      onProgress?: (progress: number) => void 
+    }) => {
       if (isMock) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        if (onProgress) {
+          onProgress(30);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          onProgress(60);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          onProgress(90);
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+        
         return {
           data: {
             id: `JOB-${Math.floor(Math.random() * 1000)}`,
@@ -25,7 +43,7 @@ export const useUpload = () => {
           meta: { success: true, message: "File uploaded successfully (Mock)" },
         };
       }
-      return uploadService.upload(file, pages);
+      return uploadService.upload(file, pages, onProgress);
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["source-files"] });

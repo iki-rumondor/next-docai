@@ -57,11 +57,16 @@ export const UploadDropzone = () => {
         const pendingFiles = files.filter((f) => f.status === "pending");
         
         for (const fileObj of pendingFiles) {
-            // Update status to uploading
-            setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: "uploading" as const, progress: 30 } : f));
+            // Update status to uploading and initial progress
+            setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: "uploading" as const, progress: 0 } : f));
             
             try {
-                await uploadAsync({ file: fileObj.file });
+                await uploadAsync({ 
+                    file: fileObj.file,
+                    onProgress: (percent) => {
+                        setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, progress: percent } : f));
+                    }
+                });
                 
                 setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: "complete" as const, progress: 100 } : f));
             } catch {
