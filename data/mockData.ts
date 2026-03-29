@@ -47,7 +47,7 @@ export const mockJobs: Job[] = [
     id: "JOB-004",
     fileName: "bill_of_lading_set.pdf",
     pages: 12,
-    status: "queued",
+    status: "failed",
     progress: 0,
     createdAt: "2026-03-10 11:00",
   },

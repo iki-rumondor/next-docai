@@ -93,7 +93,7 @@ export const filesService = {
           file_path: '/tmp/mock.pdf',
           mime_type: 'application/pdf',
           page_count: 5,
-          status: 'queued',
+          status: 'failed',
           progress: 0,
           error_message: null,
           created_at: new Date().toISOString(),
