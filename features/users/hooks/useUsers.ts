@@ -15,7 +15,7 @@ const mockUsers: User[] = [
   {
     id: "USR-001",
     name: "Admin Utama",
-    email: "admin@docai.com",
+    email: "admin@ocrinvoice.com",
     role: "admin",
     status: "active",
     lastLogin: "2026-03-15 10:00",
@@ -23,7 +23,7 @@ const mockUsers: User[] = [
   {
     id: "USR-002",
     name: "Operator Satu",
-    email: "operator1@docai.com",
+    email: "operator1@ocrinvoice.com",
     role: "operator",
     status: "active",
     lastLogin: "2026-03-14 15:30",
@@ -31,7 +31,7 @@ const mockUsers: User[] = [
   {
     id: "USR-003",
     name: "Operator Dua",
-    email: "operator2@docai.com",
+    email: "operator2@ocrinvoice.com",
     role: "operator",
     status: "inactive",
     lastLogin: "2026-03-10 09:45",

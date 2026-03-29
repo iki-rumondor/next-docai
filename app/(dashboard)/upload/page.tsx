@@ -1,4 +1,10 @@
+import { Metadata } from 'next';
 import { UploadDropzone } from '@/features/upload';
+
+export const metadata: Metadata = {
+    title: 'Upload Document | OCR Invoice',
+    description: 'Upload PDF documents for AI-powered data extraction',
+};
 
 export default function UploadPage() {
     return (

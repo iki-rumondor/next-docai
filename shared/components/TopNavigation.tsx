@@ -43,7 +43,7 @@ const TopNavigation = () => {
               <Cpu className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="text-sm font-bold text-foreground tracking-tight hidden sm:inline">
-              DocAI
+              OCR Invoice
             </span>
           </div>
 
