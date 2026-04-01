@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { StatusBadge, Status } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
 import { JsonViewer } from "./JsonViewer";
+import { DocumentMetrics } from "./DocumentMetrics";
 import { Document } from "../model/documents.schema";
 import { useDocuments } from "../hooks/useDocuments";
 import { useJobs } from "../hooks/useJobs";
@@ -134,6 +135,13 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                                         ) : (
                                             <div className="py-2 text-sm text-muted-foreground italic">No fields extracted for this document.</div>
                                         )}
+
+                                        <div className="mt-6">
+                                            <DocumentMetrics 
+                                                processingTime={fullDocument.processing_time} 
+                                                aiUsage={fullDocument.ai_usage} 
+                                            />
+                                        </div>
 
                                         {items.length > 0 && (
                                             <div>

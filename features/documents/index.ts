@@ -1,4 +1,5 @@
 export * from './components/JsonViewer';
+export * from './components/DocumentMetrics';
 export * from './components/DocumentCard';
 export * from './model/documents.schema';
 export * from './model/jobs.schema';

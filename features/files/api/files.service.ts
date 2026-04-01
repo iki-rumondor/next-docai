@@ -24,6 +24,7 @@ export const filesService = {
               error_message: null,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
+              processing_duration: 12.5,
             },
             {
               id: '2',
@@ -69,6 +70,7 @@ export const filesService = {
           error_message: null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          processing_duration: 45.2,
           uploaded_by: {
             id: 'u1',
             name: 'Mock User',
@@ -98,6 +100,7 @@ export const filesService = {
           error_message: null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          processing_duration: 14.8,
         },
         meta: { success: true, message: 'Retrying processing' },
       };

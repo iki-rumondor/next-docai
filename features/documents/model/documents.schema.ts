@@ -27,6 +27,31 @@ export const documentItemSchema = z.record(z.string(), z.any());
 
 export type DocumentItem = z.infer<typeof documentItemSchema>;
 
+export const processingTimeSchema = z.object({
+  started_at: z.string(),
+  completed_at: z.string(),
+  duration_ms: z.number(),
+  duration_sec: z.number(),
+});
+
+export type ProcessingTime = z.infer<typeof processingTimeSchema>;
+
+export const aiUsageSchema = z.object({
+  model: z.string(),
+  prompt_tokens: z.number(),
+  output_tokens: z.number(),
+  total_tokens: z.number(),
+  input_price: z.string(),
+  output_price: z.string(),
+  total_price: z.string(),
+  total_pages: z.number(),
+  duration_ms: z.number(),
+  duration_sec: z.number(),
+});
+
+export type AiUsage = z.infer<typeof aiUsageSchema>;
+
+
 export const documentSchema = z.object({
   id: z.string(),
   job_id: z.string(),
@@ -46,6 +71,8 @@ export const documentSchema = z.object({
   updated_at: z.string().nullable().optional(),
   fields: z.array(documentFieldSchema).optional(),
   items: z.array(documentItemSchema).optional(),
+  processing_time: processingTimeSchema.optional(),
+  ai_usage: aiUsageSchema.optional(),
 });
 
 export type Document = z.infer<typeof documentSchema>;

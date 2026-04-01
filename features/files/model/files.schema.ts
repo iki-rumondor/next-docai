@@ -16,6 +16,7 @@ export const sourceFileSchema = z.object({
   error_message: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string().nullable(),
+  processing_duration: z.number().optional(),
   uploaded_by: z.object({
     id: z.string(),
     name: z.string(),

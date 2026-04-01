@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react'
-import { AlertCircle, Clock, FileText, Layers, RotateCcw } from 'lucide-react';
+import { AlertCircle, Clock, FileText, Layers, RotateCcw, Timer } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { RetryModal } from '@/shared/components/RetryModal';
@@ -51,6 +51,14 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
         }
     };
 
+    const formatDuration = (seconds?: number) => {
+        if (seconds === undefined || seconds === null) return null;
+        if (seconds < 60) return `${seconds.toFixed(1)}s`;
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${m}m ${s}s`;
+    };
+
     const documents = documentsData?.data?.data || [];
 
     return (
@@ -75,6 +83,11 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                             <span className="flex items-center gap-1.5">
                                 <Layers className="h-3.5 w-3.5" /> {job.page_count} pages
                             </span>
+                            {(job.status === "completed" || job.status === "failed") && job.processing_duration !== undefined && (
+                                <span className="flex items-center gap-1.5 text-primary">
+                                    <Timer className="h-3.5 w-3.5" /> {formatDuration(job.processing_duration)} processing
+                                </span>
+                            )}
                         </div>
                     </div>
 
