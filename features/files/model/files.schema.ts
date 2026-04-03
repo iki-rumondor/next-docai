@@ -17,6 +17,17 @@ export const sourceFileSchema = z.object({
   created_at: z.string(),
   updated_at: z.string().nullable(),
   processing_duration: z.number().optional(),
+  processing_time: z.object({
+    started_at: z.string(),
+    completed_at: z.string().nullable(),
+    duration_ms: z.number(),
+    duration_sec: z.number(),
+  }).optional(),
+  pricing: z.object({
+    cheap_total_price: z.number(),
+    smart_total_price: z.number(),
+    total_price: z.number(),
+  }).optional(),
   uploaded_by: z.object({
     id: z.string(),
     name: z.string(),

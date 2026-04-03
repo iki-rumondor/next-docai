@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react'
-import { AlertCircle, Clock, FileText, Layers, RotateCcw, Timer } from 'lucide-react';
+import { AlertCircle, Clock, FileText, Layers, RotateCcw, Timer, Zap } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { RetryModal } from '@/shared/components/RetryModal';
@@ -11,6 +11,7 @@ import { useFiles } from '../hooks/useFiles';
 import { useSourceFileSync } from '../hooks/useSourceFileSync';
 import { FILE_STATUSES, FILE_STATUS_CONFIG } from '../constants/file-status';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 
 export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
@@ -83,10 +84,29 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                             <span className="flex items-center gap-1.5">
                                 <Layers className="h-3.5 w-3.5" /> {job.page_count} pages
                             </span>
-                            {(job.status === "completed" || job.status === "failed") && job.processing_duration !== undefined && (
-                                <span className="flex items-center gap-1.5 text-primary">
-                                    <Timer className="h-3.5 w-3.5" /> {formatDuration(job.processing_duration)} processing
-                                </span>
+                            {(job.status === "completed" || job.status === "failed") && (job.processing_duration !== undefined || job.processing_time?.duration_sec !== undefined) && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="flex items-center gap-1.5 text-primary cursor-help bg-primary/5 px-2 py-0.5 rounded-md border border-primary/20">
+                                            <Timer className="h-3.5 w-3.5" /> {formatDuration(job.processing_time ? job.processing_time.duration_sec : job.processing_duration)}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Processing Time Total
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
+                            {job.pricing && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="flex items-center gap-1.5 text-orange-600 font-bold cursor-help bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200">
+                                            <Zap className="h-3.5 w-3.5" /> ${job.pricing.total_price.toFixed(5)}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        AI Usage (Smart + Cheap Models)
+                                    </TooltipContent>
+                                </Tooltip>
                             )}
                         </div>
                     </div>
