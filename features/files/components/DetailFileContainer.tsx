@@ -9,11 +9,11 @@ import { useDocuments, DocumentCard, Document, JsonViewer } from '@/features/doc
 import { SourceFile } from '../model/files.schema';
 import { useFiles } from '../hooks/useFiles';
 // import { useSourceFileSync } from '../hooks/useSourceFileSync';
-import { FILE_STATUSES, FILE_STATUS_CONFIG } from '../constants/file-status';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { formatDate } from '@/shared/lib/utils';
+import { DOCUMENT_STATUS_CONFIG, DOCUMENT_STATUSES } from '../constants/document-status';
 
 export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     const [page, setPage] = useState(1);
@@ -185,9 +185,9 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl">
                                   <SelectItem value="all">All Status</SelectItem>
-                                    {FILE_STATUSES.map((s) => (
+                                    {DOCUMENT_STATUSES.map((s) => (
                                         <SelectItem key={s} value={s}>
-                                            {FILE_STATUS_CONFIG[s].label}
+                                            {DOCUMENT_STATUS_CONFIG[s].label}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
