@@ -1,18 +1,19 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useSSE } from "@/shared/hooks/use-sse";
-import { ApiResponse } from "@/shared/types/api-response";
-import { SourceFile, SourceFileStatus } from "../model/files.schema";
+// import { useSSE } from "@/shared/hooks/use-sse";
+// import { ApiResponse } from "@/shared/types/api-response";
+// import { SourceFile, SourceFileStatus } from "../model/files.schema";
 import { getCookie } from "@/shared/lib/cookies";
 
 /**
  * Hook to sync source file (job) status and progress via Server-Sent Events (SSE).
  */
 export const useSourceFileSync = (fileId: string | null) => {
-  const queryClient = useQueryClient();
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const token = getCookie('auth_token');
+  // const queryClient = useQueryClient();
+  // const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  // const token = getCookie('auth_token');
 
   // SSE Implementation
+/*
   const { isConnected } = useSSE<{
     status: string;
     progress?: number;
@@ -61,6 +62,7 @@ export const useSourceFileSync = (fileId: string | null) => {
       }
     }
   );
+*/
 
-  return { isConnected };
+  return { isConnected: false };
 };

@@ -8,9 +8,12 @@ export default function DashboardPage() {
     const { useFileList } = useFiles();
     
     // Fetch jobs for different statuses to get counts
+    const { data: allData } = useFileList({});
     const { data: processingData, isLoading: isProcessingLoading } = useFileList({ status: 'processing' });
     const { data: completedData } = useFileList({ status: 'completed' });
     const { data: failedData } = useFileList({ status: 'failed' });
+    
+    const allCount = allData?.data?.pagination.total || 0;
     
     const processingJobs = processingData?.data?.data || [];
     const processingCount = processingData?.data?.pagination.total || 0;
@@ -26,10 +29,9 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <StatCard
-                    title="Processed Today"
-                    value={completedCount + failedCount}
+                    title="All Files"
+                    value={allCount}
                     icon={FileCheck}
-                    trend="+12% from yesterday"
                     variant="primary"
                 />
                 <StatCard

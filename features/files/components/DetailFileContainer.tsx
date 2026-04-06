@@ -8,11 +8,12 @@ import { Progress } from '@/shared/components/ui/progress';
 import { useDocuments, DocumentCard, Document, JsonViewer } from '@/features/documents';
 import { SourceFile } from '../model/files.schema';
 import { useFiles } from '../hooks/useFiles';
-import { useSourceFileSync } from '../hooks/useSourceFileSync';
+// import { useSourceFileSync } from '../hooks/useSourceFileSync';
 import { FILE_STATUSES, FILE_STATUS_CONFIG } from '../constants/file-status';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { formatDate } from '@/shared/lib/utils';
 
 export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     const [page, setPage] = useState(1);
@@ -28,7 +29,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     const { retry: retryFile, isRetrying: isRetryingFile } = useFiles();
     
     // Sync file progress/status via SSE
-    useSourceFileSync(job.id);
+    // useSourceFileSync(job.id);
     
     const [retryOpen, setRetryOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'documents' | 'json'>('documents');
@@ -79,7 +80,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
 
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1.5">
-                                <Clock className="h-3.5 w-3.5" /> {job.created_at}
+                                <Clock className="h-3.5 w-3.5" /> {formatDate(job.created_at)}
                             </span>
                             <span className="flex items-center gap-1.5">
                                 <Layers className="h-3.5 w-3.5" /> {job.page_count} pages
