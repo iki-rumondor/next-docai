@@ -10,7 +10,6 @@ import { JsonViewer } from "./JsonViewer";
 import { DocumentMetrics } from "./DocumentMetrics";
 import { Document } from "../model/documents.schema";
 import { useDocuments } from "../hooks/useDocuments";
-import { useJobs } from "../hooks/useJobs";
 import { useDocumentSync } from "../hooks/useDocumentSync";
 
 interface DocumentCardProps {
@@ -22,21 +21,18 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
     const [retryOpen, setRetryOpen] = useState(false);
     const [activeView, setActiveView] = useState<'visual' | 'json'>('visual');
     
-    const { useDocumentDetail } = useDocuments();
+    const { useDocumentDetail, retry, isRetrying } = useDocuments();
     const { data: detailResponse, isLoading: isDetailLoading } = useDocumentDetail(isOpen ? document.id : "");
-    const { retryJob, isRetrying } = useJobs();
     
     // Sync document status via SSE
     useDocumentSync(document.id);
 
     const handleRetryConfirm = () => {
-        if (document.job_id) {
-            retryJob(document.job_id, {
-                onSuccess: () => {
-                    setRetryOpen(false);
-                }
-            });
-        }
+        retry(document.id, {
+            onSuccess: () => {
+                setRetryOpen(false);
+            }
+        });
     };
 
     const documentType = document.document_type?.name || "Unknown Document";
@@ -70,7 +66,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                     </div>
                     <div className="flex items-center gap-3">
                         <StatusBadge status={status as Status} />
-                        {status === "failed" && (
+                        {(status === "failed" || status === "pending_review") && (
                             <Button
                                 variant="ghost"
                                 size="sm"

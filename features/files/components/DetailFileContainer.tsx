@@ -33,7 +33,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     
     const [retryOpen, setRetryOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'documents' | 'json'>('documents');
-    const hasFailedPages = job.status === "failed";
+    const canRetry = job.status === "failed" || job.status === "pending_review";
 
     const handleRetryFile = () => {
         retryFile(job.id, {
@@ -114,14 +114,14 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
 
                     <div className="flex items-center gap-3">
                         <StatusBadge status={job.status} />
-                        {hasFailedPages && (
+                        {canRetry && (
                             <Button
                                 variant="outline"
                                 size="sm"
                                 className="rounded-xl"
                                 onClick={() => setRetryOpen(true)}
                             >
-                                <RotateCcw className="h-3.5 w-3.5 mr-1" /> Retry Failed Pages
+                                <RotateCcw className="h-3.5 w-3.5 mr-1" /> Retry Processing
                             </Button>
                         )}
                     </div>
@@ -254,8 +254,8 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
             <RetryModal
                 open={retryOpen}
                 onOpenChange={setRetryOpen}
-                title="Retry Failed Pages"
-                description={`This will re-process all failed pages in ${job.file_name}. Are you sure?`}
+                title="Retry Processing"
+                description={`This will re-process ${job.file_name}. Are you sure?`}
                 onConfirm={handleRetryFile}
                 isLoading={isRetryingFile}
             />

@@ -15,8 +15,8 @@ export default function FilesPage() {
     const { useFileList } = useFiles();
     const { data: fileData, isLoading } = useFileList({ 
         status: statusFilter === "all" ? undefined : statusFilter,
-        page,
-        limit: 5
+        page: search ? 1 : page,
+        limit: search ? 1000 : 10 // Fetch everything (up to 1000) when searching
     });
 
     // Reset pagination when filters change
@@ -35,7 +35,17 @@ export default function FilesPage() {
         });
     }, [fileData, search]);
 
-    const pagination = fileData?.data.pagination;
+    const pagination = useMemo(() => {
+        if (!fileData?.data.pagination) return undefined;
+        if (!search) return fileData.data.pagination;
+
+        return {
+            ...fileData.data.pagination,
+            total: filteredJobs.length,
+            total_pages: 1,
+            limit: Math.max(filteredJobs.length, 1)
+        };
+    }, [fileData, search, filteredJobs]);
 
     if (isLoading) return <div className="text-center py-20">Loading files...</div>;
 

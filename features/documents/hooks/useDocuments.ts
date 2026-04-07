@@ -1,8 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { documentsService } from "../api/documents.service";
 import { ListDocumentsQuery } from "../model/documents.schema";
+import { toast } from "sonner";
+import { ApiError } from "@/shared/lib/api-error";
 
 export const useDocuments = (query?: ListDocumentsQuery) => {
+  const queryClient = useQueryClient();
+
   const useDocumentsList = () => {
     return useQuery({
       queryKey: ["documents", query],
@@ -18,8 +22,22 @@ export const useDocuments = (query?: ListDocumentsQuery) => {
     });
   };
 
+  const retryMutation = useMutation({
+    mutationFn: (id: string) => documentsService.retry(id),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      const message = res.meta?.message || "Document retry triggered";
+      toast.success(message);
+    },
+    onError: (err: ApiError) => {
+      toast.error("Retry failed", { description: err.message });
+    },
+  });
+
   return {
     useDocumentsList,
     useDocumentDetail,
+    retry: retryMutation.mutate,
+    isRetrying: retryMutation.isPending,
   };
 };
