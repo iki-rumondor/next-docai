@@ -9,13 +9,13 @@ export const apiClient = axios.create({
 
 interface FailedRequest {
   resolve: (token: string | null) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }
 
 let isRefreshing = false;
 let failedQueue: FailedRequest[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -96,7 +96,7 @@ apiClient.interceptors.response.use(
         isRefreshing = false;
 
         return apiClient(originalRequest);
-      } catch (refreshError: any) {
+      } catch (refreshError: unknown) {
         processQueue(refreshError, null);
         isRefreshing = false;
 

@@ -21,8 +21,9 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
     const [retryOpen, setRetryOpen] = useState(false);
     const [activeView, setActiveView] = useState<'visual' | 'json'>('visual');
     
-    const { useDocumentDetail, retry, isRetrying } = useDocuments();
+    const { useDocumentDetail, useDocumentRaw, retry, isRetrying } = useDocuments();
     const { data: detailResponse, isLoading: isDetailLoading } = useDocumentDetail(isOpen ? document.id : "");
+    const { data: rawResponse, isLoading: isRawLoading } = useDocumentRaw(isOpen && activeView === 'json' ? document.id : "");
     
     // Sync document status via SSE
     useDocumentSync(document.id);
@@ -171,8 +172,13 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                                             </div>
                                         )}
                                     </>
+                                ) : isRawLoading ? (
+                                    <div className="flex flex-col items-center justify-center py-10 space-y-3">
+                                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                                        <p className="text-xs text-muted-foreground">Fetching raw payload data...</p>
+                                    </div>
                                 ) : (
-                                    <JsonViewer data={fullDocument} title={`${documentType} Payload`} />
+                                    <JsonViewer data={rawResponse} title={`${documentType} Payload`} />
                                 )}
                             </>
                         )}

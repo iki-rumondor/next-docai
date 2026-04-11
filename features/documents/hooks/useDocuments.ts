@@ -34,9 +34,18 @@ export const useDocuments = (query?: ListDocumentsQuery) => {
     },
   });
 
+  const useDocumentRaw = (id: string) => {
+    return useQuery({
+      queryKey: ["documents", id, "raw"],
+      queryFn: () => documentsService.getRawById(id),
+      enabled: !!id,
+    });
+  };
+
   return {
     useDocumentsList,
     useDocumentDetail,
+    useDocumentRaw,
     retry: retryMutation.mutate,
     isRetrying: retryMutation.isPending,
   };
