@@ -56,7 +56,7 @@ export const DocumentMetrics = ({ processingTime, aiUsage }: DocumentMetricsProp
                                 <span className="text-[10px]">Cost</span>
                             </div>
                             <p className="text-sm font-bold text-foreground">
-                                ${parseFloat(aiUsage.total_price).toFixed(4)}
+                                ${aiUsage.total_price.toFixed(4)}
                             </p>
                         </div>
 

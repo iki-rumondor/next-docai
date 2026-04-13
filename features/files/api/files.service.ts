@@ -74,8 +74,6 @@ export const filesService = {
           uploaded_by: {
             id: 'u1',
             name: 'Mock User',
-            email: 'mock@example.com',
-            role: 'admin'
           }
         },
         meta: { success: true },

@@ -23,16 +23,18 @@ export const sourceFileSchema = z.object({
     duration_ms: z.number(),
     duration_sec: z.number(),
   }).optional(),
-  pricing: z.object({
-    cheap_total_price: z.number(),
-    smart_total_price: z.number(),
+  ai_usage: z.object({
+    model: z.string(),
+    prompt_tokens: z.number(),
+    output_tokens: z.number(),
+    total_tokens: z.number(),
+    cheap_model_price: z.number(),
+    flagship_model_price: z.number(),
     total_price: z.number(),
   }).optional(),
   uploaded_by: z.object({
     id: z.string(),
     name: z.string(),
-    email: z.string(),
-    role: z.string(),
   }).optional(),
 });
 

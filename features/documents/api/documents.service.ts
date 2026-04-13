@@ -22,7 +22,7 @@ export const documentsService = {
               start_page: 1,
               end_page: 1,
               status: 'completed',
-              confidence: '0.98',
+              confidence: 0.98,
               needs_review: false,
               created_at: new Date().toISOString(),
               fields: [
@@ -62,7 +62,7 @@ export const documentsService = {
           start_page: 1,
           end_page: 1,
           status: 'completed',
-          confidence: '0.98',
+          confidence: 0.98,
           needs_review: false,
           created_at: new Date().toISOString(),
           fields: [
@@ -89,7 +89,7 @@ export const documentsService = {
           start_page: 1,
           end_page: 1,
           status: "queued",
-          confidence: "0.98",
+          confidence: 0.98,
           needs_review: false,
           created_at: new Date().toISOString(),
         },

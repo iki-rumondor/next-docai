@@ -97,15 +97,15 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                                     </TooltipContent>
                                 </Tooltip>
                             )}
-                            {job.pricing && (
+                            {job.ai_usage && (
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <span className="flex items-center gap-1.5 text-orange-600 font-bold cursor-help bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200">
-                                            <Zap className="h-3.5 w-3.5" /> ${job.pricing.total_price.toFixed(5)}
+                                            <Zap className="h-3.5 w-3.5" /> ${job.ai_usage.total_price.toFixed(5)}
                                         </span>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        AI Usage (Smart + Cheap Models)
+                                        AI Usage Models: {job.ai_usage.model} (Tokens: {job.ai_usage.total_tokens})
                                     </TooltipContent>
                                 </Tooltip>
                             )}

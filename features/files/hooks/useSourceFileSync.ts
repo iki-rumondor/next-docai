@@ -1,8 +1,8 @@
-import { useQueryClient } from "@tanstack/react-query";
+// import { useQueryClient } from "@tanstack/react-query";
 // import { useSSE } from "@/shared/hooks/use-sse";
 // import { ApiResponse } from "@/shared/types/api-response";
 // import { SourceFile, SourceFileStatus } from "../model/files.schema";
-import { getCookie } from "@/shared/lib/cookies";
+// import { getCookie } from "@/shared/lib/cookies";
 
 /**
  * Hook to sync source file (job) status and progress via Server-Sent Events (SSE).
@@ -20,7 +20,7 @@ export const useSourceFileSync = (fileId: string | null) => {
     message?: string;
     error_message?: string;
     processing_time?: SourceFile['processing_time'];
-    pricing?: SourceFile['pricing'];
+    ai_usage?: SourceFile['ai_usage'];
   }>(
     fileId ? `${baseUrl}/source-files/${fileId}/stream` : null,
     {
@@ -41,7 +41,7 @@ export const useSourceFileSync = (fileId: string | null) => {
               status,
               ...(progress !== undefined ? { progress } : {}),
               ...(data.processing_time ? { processing_time: data.processing_time } : {}),
-              ...(data.pricing ? { pricing: data.pricing } : {}),
+              ...(data.ai_usage ? { ai_usage: data.ai_usage } : {}),
             },
           };
         });

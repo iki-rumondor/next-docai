@@ -8,9 +8,9 @@ export const vendorSchema = z.object({
 export type Vendor = z.infer<typeof vendorSchema>;
 
 export const documentTypeSchema = z.object({
-  id: z.string(),
-  code: z.string(),
-  name: z.string(),
+  id: z.string().nullable(),
+  code: z.string().nullable(),
+  name: z.string().nullable(),
 });
 
 export type DocumentType = z.infer<typeof documentTypeSchema>;
@@ -41,9 +41,9 @@ export const aiUsageSchema = z.object({
   prompt_tokens: z.number(),
   output_tokens: z.number(),
   total_tokens: z.number(),
-  input_price: z.string(),
-  output_price: z.string(),
-  total_price: z.string(),
+  input_price: z.number(),
+  output_price: z.number(),
+  total_price: z.number(),
   total_pages: z.number(),
   duration_ms: z.number(),
   duration_sec: z.number(),
@@ -64,7 +64,8 @@ export const documentSchema = z.object({
   start_page: z.number(),
   end_page: z.number(),
   status: z.string(),
-  confidence: z.string().optional(),
+  confidence: z.number().nullable().optional(),
+  file_path: z.string().nullable().optional(),
   needs_review: z.boolean().optional(),
   error_message: z.string().nullable().optional(),
   created_at: z.string(),

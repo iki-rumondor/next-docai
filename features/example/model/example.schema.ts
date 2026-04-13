@@ -1,9 +1,0 @@
-import { z } from 'zod';
-
-export const exampleSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  createdAt: z.string().datetime(),
-});
-
-export type ExampleData = z.infer<typeof exampleSchema>;
