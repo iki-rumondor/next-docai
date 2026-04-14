@@ -4,10 +4,10 @@ import { Button } from "@/shared/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
-import { DocumentInstance } from "@/data/mockData";
+import { Document } from "@/shared/types";
 
 interface InstanceCardProps {
-    instance: DocumentInstance;
+    instance: Document;
 }
 
 export const InstanceCard = ({ instance }: InstanceCardProps) => {
@@ -30,8 +30,8 @@ export const InstanceCard = ({ instance }: InstanceCardProps) => {
                             )}
                         </div>
                         <div className="text-left">
-                            <p className="text-sm font-semibold text-foreground">{instance.documentType}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">{instance.vendor}</p>
+                            <p className="text-sm font-semibold text-foreground">{instance.document_type?.name || "Unknown Document"}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{instance.vendor?.name}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -60,16 +60,16 @@ export const InstanceCard = ({ instance }: InstanceCardProps) => {
                                 Extracted Fields
                             </h4>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {Object.entries(instance.fields).map(([key, value]) => (
-                                    <div key={key} className="rounded-xl bg-muted/40 p-4">
-                                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{key}</p>
-                                        <p className="text-sm font-semibold text-foreground mt-1">{value}</p>
+                                {instance.fields?.map((field) => (
+                                    <div key={field.key} className="rounded-xl bg-muted/40 p-4">
+                                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{field.key}</p>
+                                        <p className="text-sm font-semibold text-foreground mt-1">{field.value}</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {instance.items.length > 0 && (
+                        {instance.items && instance.items.length > 0 && (
                             <div>
                                 <h4 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
                                     Line Items
@@ -107,8 +107,8 @@ export const InstanceCard = ({ instance }: InstanceCardProps) => {
             <RetryModal
                 open={retryOpen}
                 onOpenChange={setRetryOpen}
-                title={`Retry ${instance.documentType}`}
-                description={`This will re-process the ${instance.documentType} from ${instance.vendor}. Are you sure?`}
+                title={`Retry ${instance.document_type?.name || 'Document'}`}
+                description={`This will re-process the ${instance.document_type?.name || 'document'} from ${instance.vendor?.name || 'the vendor'}. Are you sure?`}
             />
         </>
     );

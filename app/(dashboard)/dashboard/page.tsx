@@ -1,24 +1,16 @@
 'use client';
 
 import { FilesTable, useFiles } from "@/features/files";
-import { StatCard } from "@/shared/components/StatCard";
-import { AlertTriangle, CheckCircle, Cpu, FileCheck, Info, Loader2 } from "lucide-react";
+import { DashboardStats } from "@/features/dashboard";
+import { Info, Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
     const { useFileList } = useFiles();
     
-    // Fetch jobs for different statuses to get counts
-    const { data: allData } = useFileList({});
+    // Fetch only the processing jobs for the list
     const { data: processingData, isLoading: isProcessingLoading } = useFileList({ status: 'processing' });
-    const { data: completedData } = useFileList({ status: 'completed' });
-    const { data: failedData } = useFileList({ status: 'failed' });
     
-    const allCount = allData?.data?.pagination.total || 0;
-    
-    const processingJobs = processingData?.data?.data || [];
-    const processingCount = processingData?.data?.pagination.total || 0;
-    const completedCount = completedData?.data?.pagination.total || 0;
-    const failedCount = failedData?.data?.pagination.total || 0;
+    const processingJobs = processingData?.data || [];
 
     return (
         <div className="space-y-10 animate-fade-in">
@@ -27,32 +19,7 @@ export default function DashboardPage() {
                 <p className="text-muted-foreground mt-1.5">Operational overview of document processing</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <StatCard
-                    title="All Files"
-                    value={allCount}
-                    icon={FileCheck}
-                    variant="primary"
-                />
-                <StatCard
-                    title="Currently Processing"
-                    value={processingCount}
-                    icon={Cpu}
-                    variant="info"
-                />
-                <StatCard
-                    title="Completed Jobs"
-                    value={completedCount}
-                    icon={CheckCircle}
-                    variant="success"
-                />
-                <StatCard
-                    title="Failed Jobs"
-                    value={failedCount}
-                    icon={AlertTriangle}
-                    variant="destructive"
-                />
-            </div>
+            <DashboardStats />
 
             <div>
                 <h2 className="text-lg font-semibold text-foreground mb-5">Files in Processing</h2>

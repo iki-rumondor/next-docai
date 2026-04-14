@@ -4,10 +4,10 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
-import { StatusBadge, Status } from "@/shared/components/StatusBadge";
-import { RetryModal } from "@/shared/components/RetryModal";
 import { JsonViewer } from "./JsonViewer";
 import { DocumentMetrics } from "./DocumentMetrics";
+import { DocumentStatusBadge } from "./DocumentStatusBadge";
+import { RetryModal } from "@/shared/components/RetryModal";
 import { Document } from "../model/documents.schema";
 import { useDocuments } from "../hooks/useDocuments";
 import { useDocumentSync } from "../hooks/useDocumentSync";
@@ -66,7 +66,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <StatusBadge status={status as Status} />
+                        <DocumentStatusBadge status={status} />
                         {(status === "failed" || status === "pending_review") && (
                             <Button
                                 variant="ghost"
@@ -103,14 +103,16 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                                     >
                                         Visual Data
                                     </Button>
-                                    <Button
-                                        variant={activeView === 'json' ? 'secondary' : 'ghost'}
-                                        size="sm"
-                                        className="rounded-lg h-8 text-xs px-3"
-                                        onClick={() => setActiveView('json')}
-                                    >
-                                        Raw JSON
-                                    </Button>
+                                    {status === 'completed' && (
+                                        <Button
+                                            variant={activeView === 'json' ? 'secondary' : 'ghost'}
+                                            size="sm"
+                                            className="rounded-lg h-8 text-xs px-3"
+                                            onClick={() => setActiveView('json')}
+                                        >
+                                            Raw JSON
+                                        </Button>
+                                    )}
                                 </div>
 
                                 {activeView === 'visual' ? (

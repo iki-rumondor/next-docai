@@ -6,6 +6,14 @@ export interface ApiResponse<T> {
     message?: string;
     [key: string]: unknown;
   };
+  pagination?: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+    has_next_page: boolean;
+    has_prev_page: boolean;
+  };
 }
 
 export interface PaginatedData<T> {

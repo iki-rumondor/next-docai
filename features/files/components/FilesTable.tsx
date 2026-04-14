@@ -22,8 +22,10 @@ interface FilesTableProps {
   pagination?: {
     page: number;
     limit: number;
-    total: number;
+    total_items: number;
     total_pages: number;
+    has_next_page: boolean;
+    has_prev_page: boolean;
   };
   onPageChange?: (page: number) => void;
 }
@@ -118,11 +120,11 @@ export const FilesTable = ({
             </span>{" "}
             to{" "}
             <span className="font-medium text-foreground">
-              {Math.min(pagination.page * pagination.limit, pagination.total)}
+              {Math.min(pagination.page * pagination.limit, pagination.total_items)}
             </span>{" "}
             of{" "}
             <span className="font-medium text-foreground">
-              {pagination.total}
+              {pagination.total_items}
             </span>{" "}
             files
           </p>
@@ -132,7 +134,7 @@ export const FilesTable = ({
               size="sm"
               className="h-8 w-8 p-0 lg:flex rounded-lg"
               onClick={() => onPageChange && onPageChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
+              disabled={!pagination.has_prev_page}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -147,7 +149,7 @@ export const FilesTable = ({
               size="sm"
               className="h-8 w-8 p-0 lg:flex rounded-lg"
               onClick={() => onPageChange && onPageChange(pagination.page + 1)}
-              disabled={pagination.page >= pagination.total_pages}
+              disabled={!pagination.has_next_page}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

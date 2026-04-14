@@ -23,7 +23,7 @@ export const DocumentMetrics = ({ processingTime, aiUsage }: DocumentMetricsProp
                             <span className="text-[10px]">Processing</span>
                         </div>
                         <p className="text-sm font-bold text-foreground">
-                            {processingTime.duration_sec.toFixed(2)}s
+                            {processingTime.duration_sec !== null ? `${processingTime.duration_sec.toFixed(2)}s` : "-"}
                         </p>
                     </div>
                 )}
@@ -35,8 +35,8 @@ export const DocumentMetrics = ({ processingTime, aiUsage }: DocumentMetricsProp
                                 <Cpu className="w-3.5 h-3.5 text-blue-500/70" />
                                 <span className="text-[10px]">Model</span>
                             </div>
-                            <p className="text-[13px] font-bold text-foreground truncate" title={aiUsage.model}>
-                                {aiUsage.model.split('-').slice(-2).join('-').toUpperCase() || aiUsage.model}
+                            <p className="text-[13px] font-bold text-foreground truncate" title={aiUsage.model || "Unknown"}>
+                                {aiUsage.model ? (aiUsage.model.split('-').slice(-2).join('-').toUpperCase() || aiUsage.model) : "N/A"}
                             </p>
                         </div>
 

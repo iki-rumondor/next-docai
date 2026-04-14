@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { FILE_STATUSES } from '../constants/file-status';
+import { z } from "zod";
+import { FILE_STATUSES } from "../../../shared/constants/file-status";
 
 export const sourceFileStatusSchema = z.enum(FILE_STATUSES);
 
@@ -17,25 +17,31 @@ export const sourceFileSchema = z.object({
   created_at: z.string(),
   updated_at: z.string().nullable(),
   processing_duration: z.number().optional(),
-  processing_time: z.object({
-    started_at: z.string(),
-    completed_at: z.string().nullable(),
-    duration_ms: z.number(),
-    duration_sec: z.number(),
-  }).optional(),
-  ai_usage: z.object({
-    model: z.string(),
-    prompt_tokens: z.number(),
-    output_tokens: z.number(),
-    total_tokens: z.number(),
-    cheap_model_price: z.number(),
-    flagship_model_price: z.number(),
-    total_price: z.number(),
-  }).optional(),
-  uploaded_by: z.object({
-    id: z.string(),
-    name: z.string(),
-  }).optional(),
+  processing_time: z
+    .object({
+      started_at: z.string().nullable(),
+      completed_at: z.string().nullable(),
+      duration_ms: z.number().nullable(),
+      duration_sec: z.number().nullable(),
+    })
+    .optional(),
+  ai_usage: z
+    .object({
+      model: z.string().nullable(),
+      prompt_tokens: z.number(),
+      output_tokens: z.number(),
+      total_tokens: z.number(),
+      cheap_model_price: z.number(),
+      flagship_model_price: z.number(),
+      total_price: z.number(),
+    })
+    .optional(),
+  uploaded_by: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .optional(),
 });
 
 export type SourceFile = z.infer<typeof sourceFileSchema>;
@@ -52,6 +58,7 @@ export const listFilesQuerySchema = z.object({
   page: z.number().optional(),
   limit: z.number().optional(),
   status: z.string().optional(),
+  search: z.string().optional(),
 });
 
 export type ListFilesQuery = z.infer<typeof listFilesQuerySchema>;
@@ -64,7 +71,9 @@ export interface ListFilesData {
   pagination: {
     page: number;
     limit: number;
-    total: number;
+    total_items: number;
     total_pages: number;
+    has_next_page: boolean;
+    has_prev_page: boolean;
   };
 }

@@ -1,5 +1,5 @@
 export const DOCUMENT_STATUSES = [
-  'queue',
+  'queued',
   'processing',
   'completed',
   'failed',
@@ -9,8 +9,8 @@ export const DOCUMENT_STATUSES = [
 export type DocumentStatus = (typeof DOCUMENT_STATUSES)[number];
 
 export const DOCUMENT_STATUS_CONFIG: Record<DocumentStatus, { label: string; color: string }> = {
-  queue: {
-    label: "Queue", 
+  queued: {
+    label: "Queued", 
     color: "badge-blue" 
   },
   processing: { 
