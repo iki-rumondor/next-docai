@@ -214,7 +214,7 @@ export const documentsService = {
       };
     }
     const { data } = await apiClient.get<unknown>(
-      `/documents/${id}/raw`
+      `/documents/${id}?raw=true`
     );
     return data;
   },
