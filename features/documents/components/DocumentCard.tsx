@@ -304,6 +304,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                   <JsonViewer
                     data={rawResponse}
                     title={`${documentType} Payload`}
+                    downloadFileName={`Output - ${document.source_file?.file_name || documentType}`}
                   />
                 )}
               </>

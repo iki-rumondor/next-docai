@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface JsonViewerProps {
     data: unknown;
     title?: string;
+    downloadFileName?: string;
 }
 
 const JsonNode = ({ data, depth = 0 }: { data: unknown; depth?: number }) => {
@@ -65,7 +66,7 @@ const JsonNode = ({ data, depth = 0 }: { data: unknown; depth?: number }) => {
     return <span>{String(data)}</span>;
 };
 
-export const JsonViewer = ({ data, title = "JSON Output" }: JsonViewerProps) => {
+export const JsonViewer = ({ data, title = "JSON Output", downloadFileName = "document-result.json" }: JsonViewerProps) => {
     const jsonString = JSON.stringify(data, null, 2);
 
     const handleCopy = () => {
@@ -78,7 +79,7 @@ export const JsonViewer = ({ data, title = "JSON Output" }: JsonViewerProps) => 
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "document-result.json";
+        a.download = downloadFileName.endsWith('.json') ? downloadFileName : `${downloadFileName}.json`;
         a.click();
         URL.revokeObjectURL(url);
         toast.success("JSON downloaded");
