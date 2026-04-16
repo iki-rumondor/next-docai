@@ -5,6 +5,32 @@ import { FileText, Upload, X } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Progress } from "@/shared/components/ui/progress";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { Label } from "@/shared/components/ui/label";
+
+const DOC_TYPES = [
+    { value: "380", label: "380: Invoice" },
+    { value: "217", label: "217: Packing List" },
+    { value: "001", label: "001: CIPL" },
+    { value: "705", label: "705: Bill of Lading (B/L)" },
+    { value: "740", label: "740: Air Way Bill (AWB)" },
+    { value: "704", label: "704: Master (B/L)" },
+    { value: "741", label: "741: Master (AWB)" },
+    { value: "860", label: "860: ECOO" },
+    { value: "861", label: "861: COO" },
+    { value: "958", label: "958: Lartas" },
+    { value: "457", label: "457: SKB PPh" },
+    { value: "800", label: "800: POSTEL" },
+    { value: "813", label: "813: CK" },
+    { value: "846", label: "846: SKEM" },
+    { value: "854", label: "854: BPOM" },
+    { value: "871", label: "871: AKL" },
+    { value: "888", label: "888: Pengecualian Perijinan" },
+    { value: "957", label: "957: SNI/SPB" },
+    { value: "959", label: "959: PI" },
+    { value: "000", label: "000: Cukai" },
+    { value: "999", label: "999: Lainnya" }
+];
 
 interface UploadFile {
     id: string;
@@ -19,6 +45,7 @@ export const UploadDropzone = () => {
     const { uploadAsync, isUploading } = useUpload();
     const [files, setFiles] = useState<UploadFile[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const [docType, setDocType] = useState<string>("");
 
     const handleFiles = useCallback((fileList: FileList) => {
         const newFiles: UploadFile[] = Array.from(fileList)
@@ -63,6 +90,7 @@ export const UploadDropzone = () => {
             try {
                 await uploadAsync({ 
                     file: fileObj.file,
+                    docType: docType && docType !== "none" ? docType : undefined,
                     onProgress: (percent) => {
                         setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, progress: percent } : f));
                     }
@@ -80,6 +108,30 @@ export const UploadDropzone = () => {
 
     return (
         <div className="space-y-6">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm">
+                <div className="mb-4 space-y-2">
+                    <Label htmlFor="doc-type" className="text-sm font-semibold text-foreground">
+                        Document Type (Optional)
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                        Select the type of document you are uploading. This helps in processing and categorizing the files.
+                    </p>
+                </div>
+                <Select value={docType} onValueChange={setDocType} disabled={isAnyUploading}>
+                    <SelectTrigger id="doc-type" className="w-full md:w-[320px] rounded-xl bg-background shadow-sm h-11">
+                        <SelectValue placeholder="Autodetect Document Type" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px] rounded-xl">
+                        <SelectItem value="none">Autodetect Document Type</SelectItem>
+                        {DOC_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                                {type.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
             <div
                 onDragOver={(e) => {
                     e.preventDefault();
@@ -184,9 +236,15 @@ export const UploadDropzone = () => {
                     </div>
 
                     {files.some(f => f.status === 'pending') && (
-                        <Button 
-                            onClick={handleUpload} 
-                            disabled={isAnyUploading}
+                        <div className="pt-2">
+                            {docType && docType !== "none" && (
+                                <p className="text-xs text-muted-foreground mb-3 text-center">
+                                    Files will be tagged as: <span className="font-semibold text-foreground">{DOC_TYPES.find(t => t.value === docType)?.label}</span>
+                                </p>
+                            )}
+                            <Button 
+                                onClick={handleUpload} 
+                                disabled={isAnyUploading}
                             className="w-full mt-2 rounded-xl h-12 shadow-primary/20 shadow-lg"
                         >
                             {isAnyUploading ? (
@@ -200,7 +258,8 @@ export const UploadDropzone = () => {
                                     Upload {files.filter(f => f.status === 'pending').length} Files
                                 </>
                             )}
-                        </Button>
+                            </Button>
+                        </div>
                     )}
                 </div>
             )}

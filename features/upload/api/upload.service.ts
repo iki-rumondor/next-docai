@@ -4,7 +4,7 @@ import { ApiResponse } from '@/shared/types/api-response';
 import { SourceFile } from '@/features/files/model/files.schema';
 
 export const uploadService = {
-  upload: async (file: File, pages?: string, onProgress?: (progress: number) => void): Promise<ApiResponse<SourceFile>> => {
+  upload: async (file: File, docType?: string, pages?: string, onProgress?: (progress: number) => void): Promise<ApiResponse<SourceFile>> => {
     if (env.NEXT_PUBLIC_MOCK_API) {
       // Simulate progress for mock
       if (onProgress) {
@@ -41,6 +41,9 @@ export const uploadService = {
     formData.append('file', file);
     if (pages) {
       formData.append('pages', pages);
+    }
+    if (docType) {
+      formData.append('doc_type', docType);
     }
 
     const { data } = await apiClient.post<ApiResponse<SourceFile>>('/source-files', formData, {

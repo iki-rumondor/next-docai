@@ -12,10 +12,12 @@ export const useUpload = () => {
   const uploadMutation = useMutation({
     mutationFn: async ({ 
       file, 
+      docType,
       pages, 
       onProgress 
     }: { 
       file: File; 
+      docType?: string;
       pages?: string; 
       onProgress?: (progress: number) => void 
     }) => {
@@ -43,7 +45,7 @@ export const useUpload = () => {
           meta: { success: true, message: "File uploaded successfully (Mock)" },
         };
       }
-      return uploadService.upload(file, pages, onProgress);
+      return uploadService.upload(file, docType, pages, onProgress);
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["source-files"] });
