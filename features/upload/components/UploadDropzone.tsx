@@ -118,11 +118,13 @@ export const UploadDropzone = () => {
                     </p>
                 </div>
                 <Select value={docType} onValueChange={setDocType} disabled={isAnyUploading}>
-                    <SelectTrigger id="doc-type" className="w-full md:w-[320px] rounded-xl bg-background shadow-sm h-11">
-                        <SelectValue placeholder="Autodetect Document Type" />
+                    <SelectTrigger id="doc-type" className={`w-full md:w-[320px] rounded-xl shadow-sm h-11 ${!docType ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'bg-background'}`}>
+                        <SelectValue placeholder="Select document type first..." />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] rounded-xl">
-                        <SelectItem value="none">Autodetect Document Type</SelectItem>
+                        <SelectItem value="none" className="font-semibold text-primary">
+                            ⚡ Autodetect Document Type
+                        </SelectItem>
                         {DOC_TYPES.map((type) => (
                             <SelectItem key={type.value} value={type.value}>
                                 {type.label}
@@ -132,7 +134,25 @@ export const UploadDropzone = () => {
                 </Select>
             </div>
 
-            <div
+            {!docType ? (
+                <div className="rounded-2xl border-2 border-dashed border-border/50 p-12 text-center bg-muted/20 opacity-60 transition-all duration-300">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center">
+                            <FileText className="h-8 w-8 text-muted-foreground/50" />
+                        </div>
+                        <div>
+                            <p className="text-lg font-semibold text-muted-foreground">
+                                Please choose a document type above
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                The upload area will become available once you make a selection.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <div
                 onDragOver={(e) => {
                     e.preventDefault();
                     setIsDragging(true);
@@ -262,6 +282,8 @@ export const UploadDropzone = () => {
                         </div>
                     )}
                 </div>
+            )}
+                </>
             )}
         </div>
     );

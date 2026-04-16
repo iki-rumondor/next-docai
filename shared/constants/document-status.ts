@@ -4,11 +4,16 @@ export const DOCUMENT_STATUSES = [
   'completed',
   'failed',
   'pending_review',
+  'extracting',
 ] as const;
 
 export type DocumentStatus = (typeof DOCUMENT_STATUSES)[number];
 
 export const DOCUMENT_STATUS_CONFIG: Record<DocumentStatus, { label: string; color: string }> = {
+  extracting: {
+    label: "Extracting", 
+    color: "badge-yellow" 
+  },
   queued: {
     label: "Queued", 
     color: "badge-blue" 
