@@ -28,6 +28,7 @@ interface FilesTableProps {
     has_prev_page: boolean;
   };
   onPageChange?: (page: number) => void;
+  isLoading?: boolean;
 }
 
 export const FilesTable = ({
@@ -35,6 +36,7 @@ export const FilesTable = ({
   compact = false,
   pagination,
   onPageChange,
+  isLoading = false,
 }: FilesTableProps) => {
   const router = useRouter();
 
@@ -64,50 +66,83 @@ export const FilesTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {jobs.map((job, idx) => (
-            <TableRow
-              key={job.id}
-              className={`cursor-pointer transition-colors duration-150 hover:bg-accent/40 ${
-                idx !== jobs.length - 1 ? "border-b border-border/30" : ""
-              }`}
-              onClick={() => router.push(`/files/${job.id}`)}
-            >
-              <TableCell className="font-medium text-[13px] max-w-55 truncate py-4">
-                {job.file_name}
-              </TableCell>
-              <TableCell className="text-[13px] text-muted-foreground py-4">
-                {job.page_count}
-              </TableCell>
-              <TableCell className="py-4">
-                <StatusBadge status={job.status} />
-              </TableCell>
-              <TableCell className="min-w-[140px] py-4">
-                <div className="flex items-center gap-3">
-                  <Progress value={job.progress} className="h-1.5 flex-1" />
-                  <span className="text-[11px] font-medium text-muted-foreground w-8 tabular-nums">
-                    {Math.round(job.progress)}%
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="text-[13px] text-muted-foreground py-4">
-                {formatDate(job.created_at)}
-              </TableCell>
-              <TableCell className="text-right py-4 px-5">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground rounded-xl"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/files/${job.id}`);
-                  }}
-                >
-                  <Eye className="h-4 w-4 mr-1.5" />
-                  {!compact && "Details"}
-                </Button>
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <TableRow key={`skeleton-${i}`} className="border-b border-border/30 last:border-0">
+                <TableCell className="py-5 px-4">
+                  <div className="h-4 w-32 bg-muted rounded-md animate-pulse" />
+                </TableCell>
+                <TableCell className="py-5 px-4">
+                  <div className="h-4 w-8 bg-muted rounded-md animate-pulse" />
+                </TableCell>
+                <TableCell className="py-5 px-4">
+                  <div className="h-6 w-20 bg-muted rounded-full animate-pulse" />
+                </TableCell>
+                <TableCell className="py-5 px-4">
+                  <div className="h-2 w-24 bg-muted rounded-full animate-pulse" />
+                </TableCell>
+                <TableCell className="py-5 px-4">
+                  <div className="h-4 w-24 bg-muted rounded-md animate-pulse" />
+                </TableCell>
+                <TableCell className="py-5 px-5 flex justify-end">
+                  <div className="h-8 w-16 bg-muted rounded-xl animate-pulse" />
+                </TableCell>
+              </TableRow>
+            ))
+          ) : jobs.length > 0 ? (
+            jobs.map((job, idx) => (
+              <TableRow
+                key={job.id}
+                className={`cursor-pointer transition-colors duration-150 hover:bg-accent/40 ${
+                  idx !== jobs.length - 1 ? "border-b border-border/30" : ""
+                }`}
+                onClick={() => router.push(`/files/${job.id}`)}
+              >
+                <TableCell className="font-medium text-[13px] max-w-55 truncate py-4">
+                  {job.file_name}
+                </TableCell>
+                <TableCell className="text-[13px] text-muted-foreground py-4">
+                  {job.page_count}
+                </TableCell>
+                <TableCell className="py-4">
+                  <StatusBadge status={job.status} />
+                </TableCell>
+                <TableCell className="min-w-[140px] py-4">
+                  <div className="flex items-center gap-3">
+                    <Progress value={job.progress} className="h-1.5 flex-1" />
+                    <span className="text-[11px] font-medium text-muted-foreground w-8 tabular-nums">
+                      {Math.round(job.progress)}%
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-[13px] text-muted-foreground py-4">
+                  {formatDate(job.created_at)}
+                </TableCell>
+                <TableCell className="text-right py-4 px-5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground rounded-xl"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/files/${job.id}`);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-1.5" />
+                    {!compact && "Details"}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} className="py-20 text-center">
+                <p className="text-muted-foreground text-sm">
+                  No files found matching your filters.
+                </p>
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
 

@@ -45,9 +45,6 @@ export default function FilesPage() {
   const jobs = fileData?.data || [];
   const pagination = fileData?.pagination;
 
-  if (isLoading)
-    return <div className="text-center py-20">Loading files...</div>;
-
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -135,19 +132,12 @@ export default function FilesPage() {
         </div>
       </div>
 
-      {jobs.length > 0 ? (
-        <FilesTable
-          jobs={jobs}
-          pagination={pagination}
-          onPageChange={setPage}
-        />
-      ) : (
-        <div className="text-center py-16 rounded-xl border border-border/60 bg-card shadow-card">
-          <p className="text-muted-foreground">
-            No files found matching your filters.
-          </p>
-        </div>
-      )}
+      <FilesTable
+        jobs={jobs}
+        pagination={pagination}
+        onPageChange={setPage}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

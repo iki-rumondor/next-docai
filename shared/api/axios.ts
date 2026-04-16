@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { normalizeApiError } from '../lib/api-error';
 import { getCookie, setCookie, deleteCookie } from '../lib/cookies';
+import { toast } from 'sonner';
 
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -73,9 +74,10 @@ apiClient.interceptors.response.use(
       }
 
       try {
+        const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
         // Use standard axios to avoid interceptor loop
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
-          refreshToken: refreshToken
+        const response = await axios.put(`${baseUrl}/auth/refresh`, {
+          refreshToken: refreshToken,
         });
 
         // Fallback for different response structures
@@ -100,17 +102,29 @@ apiClient.interceptors.response.use(
         processQueue(refreshError, null);
         isRefreshing = false;
 
+        const normalizedError = normalizeApiError(refreshError);
+        console.error('[Axios Interceptor] Refresh token process failed:', refreshError);
+        
+        // Notify the user about the session failure
+        if (typeof window !== 'undefined') {
+          toast.error("Session Expired", {
+            description: `Could not refresh session: ${normalizedError.message}. Please login again.`,
+            duration: 5000,
+          });
+        }
+
         // Clear invalid tokens
         deleteCookie('auth_token');
         deleteCookie('refresh_token');
 
-        // Force redirect to login if on client side
+        // Force redirect to login if on client side with a slight delay to allow toast/logging
         if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-          window.location.href = '/login';
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 5000);
         }
 
-        console.error('[Axios Interceptor] Refresh token process failed:', refreshError);
-        return Promise.reject(normalizeApiError(refreshError));
+        return Promise.reject(normalizedError);
       }
     }
 

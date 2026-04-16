@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const vendorSchema = z.object({
   id: z.string(),
@@ -54,10 +54,12 @@ export type AiUsage = z.infer<typeof aiUsageSchema>;
 export const DocumentSchema = z.object({
   id: z.string(),
   job_id: z.string(),
-  source_file: z.object({
-    id: z.string(),
-    file_name: z.string(),
-  }).optional(),
+  source_file: z
+    .object({
+      id: z.string(),
+      file_name: z.string(),
+    })
+    .optional(),
   document_type: documentTypeSchema.optional(),
   vendor: vendorSchema.optional(),
   start_page: z.number(),
@@ -85,4 +87,3 @@ export const listDocumentsQuerySchema = z.object({
 });
 
 export type ListDocumentsQuery = z.infer<typeof listDocumentsQuerySchema>;
-

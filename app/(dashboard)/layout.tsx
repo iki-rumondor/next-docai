@@ -1,4 +1,5 @@
 import TopNavigation from "@/shared/components/TopNavigation";
+import { DebugTokenTool } from "@/shared/components/DebugTokenTool";
 import "./style.css"
 
 
@@ -13,6 +14,7 @@ export default function DashboardLayout({
             <main className="mx-auto max-w-7xl px-6 py-8">
                 {children}
             </main>
+            <DebugTokenTool />
         </div>
     )
 }

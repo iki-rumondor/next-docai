@@ -39,7 +39,7 @@ export const authService = {
         },
       };
     }
-    const response = await apiClient.put<RefreshTokenResponse>('/auth/refresh-token', {
+    const response = await apiClient.put<RefreshTokenResponse>('/auth/refresh', {
       refreshToken: refreshToken,
     });
     return response.data;
