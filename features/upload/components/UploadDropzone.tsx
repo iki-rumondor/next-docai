@@ -48,8 +48,17 @@ export const UploadDropzone = () => {
     const [docType, setDocType] = useState<string>("");
 
     const handleFiles = useCallback((fileList: FileList) => {
+        const allowedTypes = [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+            "application/vnd.ms-excel", // .xls
+            "image/jpeg",
+            "image/png",
+            "image/jpg"
+        ];
+        
         const newFiles: UploadFile[] = Array.from(fileList)
-            .filter((f) => f.type === "application/pdf")
+            .filter((f) => allowedTypes.includes(f.type))
             .map((f) => ({
                 id: crypto.randomUUID(),
                 file: f,
@@ -58,7 +67,7 @@ export const UploadDropzone = () => {
             }));
 
         if (newFiles.length === 0) {
-            toast.error("Only PDF files are supported");
+            toast.error("Only PDF, Excel, and Image files are supported");
             return;
         }
 
@@ -113,8 +122,8 @@ export const UploadDropzone = () => {
                     <Label htmlFor="doc-type" className="text-sm font-semibold text-foreground">
                         Document Type (Optional)
                     </Label>
-                    <p className="text-xs text-muted-foreground">
-                        Select the type of document you are uploading. This helps in processing and categorizing the files.
+                    <p className="text-xs text-muted-foreground mt-1">
+                        Select the exact type of document you are uploading. <span className="font-medium text-primary">Choosing a specific document type significantly improves OCR extraction accuracy.</span>
                     </p>
                 </div>
                 <Select value={docType} onValueChange={setDocType} disabled={isAnyUploading}>
@@ -166,7 +175,7 @@ export const UploadDropzone = () => {
             >
                 <input
                     type="file"
-                    accept=".pdf"
+                    accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg"
                     multiple
                     disabled={isAnyUploading}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -178,10 +187,10 @@ export const UploadDropzone = () => {
                     </div>
                     <div>
                         <p className="text-lg font-semibold text-foreground">
-                            Drop PDF files here or click to browse
+                            Drop documents here or click to browse
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
-                            Supports PDF documents up to 50MB each
+                            Supports PDF, Excel, and Image files up to 50MB each
                         </p>
                     </div>
                 </div>
