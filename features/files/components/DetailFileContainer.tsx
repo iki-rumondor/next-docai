@@ -8,8 +8,6 @@ import {
   RotateCcw,
   Timer,
   Zap,
-  Eye,
-  Download,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { StatusBadge } from "@/shared/components/StatusBadge";
@@ -42,7 +40,6 @@ import {
   DOCUMENT_STATUS_CONFIG,
   DOCUMENT_STATUSES,
 } from "../../../shared/constants/document-status";
-import { env } from "@/shared/config/env";
 
 export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
   const [page, setPage] = useState(1);
@@ -61,7 +58,9 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
   // useSourceFileSync(job.id);
 
   const [retryOpen, setRetryOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"documents" | "json" | "preview">("documents");
+  const [activeTab, setActiveTab] = useState<
+    "documents" | "json" /* | "preview" */
+  >("documents");
   const canRetry = job.status === "failed" || job.status === "pending_review";
 
   const handleRetryFile = () => {
@@ -96,12 +95,12 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
     new Map(allDocuments.map((doc) => [doc.id, doc])).values(),
   );
 
-  const getFileUrl = () => {
-    if (job.file_path?.startsWith('http')) return job.file_path;
-    const baseUrl = env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
-    const filePath = job.file_path?.startsWith('/') ? job.file_path : `/${job.file_path}`;
-    return `${baseUrl}${filePath}`;
-  };
+  // const getFileUrl = () => {
+  //   if (job.file_path?.startsWith('http')) return job.file_path;
+  //   const baseUrl = env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
+  //   const filePath = job.file_path?.startsWith('/') ? job.file_path : `/${job.file_path}`;
+  //   return `${baseUrl}${filePath}`;
+  // };
 
   return (
     <>
@@ -216,7 +215,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               Detected Documents (
               {isLoading ? "..." : documentsData?.pagination?.total_items || 0})
             </Button>
-            <Button
+            {/* <Button
               variant={activeTab === "preview" ? "secondary" : "ghost"}
               size="sm"
               className="rounded-lg h-9 text-sm px-4"
@@ -224,7 +223,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
             >
               <Eye className="w-3.5 h-3.5 mr-2" />
               Preview Document
-            </Button>
+            </Button> */}
             <Button
               variant={activeTab === "json" ? "secondary" : "ghost"}
               size="sm"
@@ -236,7 +235,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
               className="h-9 text-xs rounded-xl"
@@ -246,7 +245,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
                 <Download className="w-3.5 h-3.5 mr-2" />
                 Download Original
               </a>
-            </Button>
+            </Button> */}
             {activeTab === "documents" && (
               <Select
                 value={status}
@@ -343,7 +342,8 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               </div>
             )}
           </>
-        ) : activeTab === "preview" ? (
+        ) : (
+          /* activeTab === "preview" ? (
           <div className="rounded-2xl border border-border/50 bg-card overflow-hidden shadow-sm">
             <div className="bg-muted/30 p-3 border-b border-border/50 flex items-center justify-between">
                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">Document Live Preview</span>
@@ -361,8 +361,10 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               />
             </div>
           </div>
-        ) : (
-          <JsonViewer data={job} title={`File ${job.file_name} RAW Content`} />
+        ) : */ <JsonViewer
+            data={job}
+            title={`File ${job.file_name} RAW Content`}
+          />
         )}
       </div>
 
