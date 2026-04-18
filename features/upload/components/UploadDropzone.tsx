@@ -99,7 +99,7 @@ export const UploadDropzone = () => {
             try {
                 await uploadAsync({ 
                     file: fileObj.file,
-                    docType: docType && docType !== "none" ? docType : undefined,
+                    docType: docType || undefined,
                     onProgress: (percent) => {
                         setFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, progress: percent } : f));
                     }
@@ -120,7 +120,7 @@ export const UploadDropzone = () => {
             <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm">
                 <div className="mb-4 space-y-2">
                     <Label htmlFor="doc-type" className="text-sm font-semibold text-foreground">
-                        Document Type (Optional)
+                        Document Type (Required)
                     </Label>
                     <p className="text-xs text-muted-foreground mt-1">
                         Select the exact type of document you are uploading. <span className="font-medium text-primary">Choosing a specific document type significantly improves OCR extraction accuracy.</span>
@@ -131,9 +131,6 @@ export const UploadDropzone = () => {
                         <SelectValue placeholder="Select document type first..." />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] rounded-xl">
-                        <SelectItem value="none" className="font-semibold text-primary">
-                            ⚡ Autodetect Document Type
-                        </SelectItem>
                         {DOC_TYPES.map((type) => (
                             <SelectItem key={type.value} value={type.value}>
                                 {type.label}
@@ -266,7 +263,7 @@ export const UploadDropzone = () => {
 
                     {files.some(f => f.status === 'pending') && (
                         <div className="pt-2">
-                            {docType && docType !== "none" && (
+                            {docType && (
                                 <p className="text-xs text-muted-foreground mb-3 text-center">
                                     Files will be tagged as: <span className="font-semibold text-foreground">{DOC_TYPES.find(t => t.value === docType)?.label}</span>
                                 </p>
