@@ -18,7 +18,7 @@ const DOC_TYPES = [
     { value: "741", label: "741: Master (AWB)" },
     { value: "860", label: "860: ECOO" },
     { value: "861", label: "861: COO" },
-    { value: "958", label: "958: Lartas" },
+    { value: "958", label: "958: Laporan Surveyor" },
     { value: "457", label: "457: SKB PPh" },
     { value: "800", label: "800: POSTEL" },
     { value: "813", label: "813: CK" },
