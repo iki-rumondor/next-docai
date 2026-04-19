@@ -17,7 +17,7 @@ export const DashboardStats: React.FC = () => {
         value={isLoading ? '...' : (stats?.processed_today.count ?? 0)}
         icon={FileCheck}
         variant="primary"
-        trend={stats?.processed_today.percentage_change ? `+${stats.processed_today.percentage_change}% from yesterday` : undefined}
+        trend={stats?.processed_today.percentage_change ? `${stats.processed_today.percentage_change}% from yesterday` : undefined}
       />
       <StatCard
         title="Currently Processing"
@@ -26,13 +26,13 @@ export const DashboardStats: React.FC = () => {
         variant="info"
       />
       <StatCard
-        title="Completed Jobs"
+        title="Completed Files"
         value={isLoading ? '...' : (stats?.completed_jobs.count ?? 0)}
         icon={CheckCircle}
         variant="success"
       />
       <StatCard
-        title="Failed Jobs"
+        title="Failed Files"
         value={isLoading ? '...' : (stats?.failed_jobs.count ?? 0)}
         icon={AlertTriangle}
         variant="destructive"
