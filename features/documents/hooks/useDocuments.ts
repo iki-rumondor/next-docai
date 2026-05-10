@@ -4,25 +4,40 @@ import { ListDocumentsQuery } from "../model/documents.schema";
 import { toast } from "sonner";
 import { ApiError } from "@/shared/lib/api-error";
 
-export const useDocuments = (query?: ListDocumentsQuery) => {
+export const useDocumentTypes = () => {
+  return useQuery({
+    queryKey: ["document-types"],
+    queryFn: () => documentsService.getDocumentTypes(),
+  });
+};
+
+export const useDocumentsList = (query?: ListDocumentsQuery) => {
+  return useQuery({
+    queryKey: ["documents", query],
+    queryFn: () => documentsService.list(query),
+  });
+};
+
+export const useDocumentDetail = (id: string) => {
+  return useQuery({
+    queryKey: ["documents", id],
+    queryFn: () => documentsService.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useDocumentRaw = (id: string) => {
+  return useQuery({
+    queryKey: ["documents", id, "raw"],
+    queryFn: () => documentsService.getRawById(id),
+    enabled: !!id,
+  });
+};
+
+export const useDocumentRetry = () => {
   const queryClient = useQueryClient();
-
-  const useDocumentsList = () => {
-    return useQuery({
-      queryKey: ["documents", query],
-      queryFn: () => documentsService.list(query),
-    });
-  };
-
-  const useDocumentDetail = (id: string) => {
-    return useQuery({
-      queryKey: ["documents", id],
-      queryFn: () => documentsService.getById(id),
-      enabled: !!id,
-    });
-  };
-
-  const retryMutation = useMutation({
+  
+  const mutation = useMutation({
     mutationFn: (id: string) => documentsService.retry(id),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
@@ -34,19 +49,8 @@ export const useDocuments = (query?: ListDocumentsQuery) => {
     },
   });
 
-  const useDocumentRaw = (id: string) => {
-    return useQuery({
-      queryKey: ["documents", id, "raw"],
-      queryFn: () => documentsService.getRawById(id),
-      enabled: !!id,
-    });
-  };
-
   return {
-    useDocumentsList,
-    useDocumentDetail,
-    useDocumentRaw,
-    retry: retryMutation.mutate,
-    isRetrying: retryMutation.isPending,
+    retry: mutation.mutate,
+    isRetrying: mutation.isPending,
   };
 };

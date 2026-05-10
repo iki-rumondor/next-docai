@@ -2,7 +2,7 @@
 
 import { BackButton } from "@/shared/components/BackButton";
 import { DetailFileContainer } from "@/features/files";
-import { useFiles } from "@/features/files/hooks/useFiles";
+import { useFileDetail } from "@/features/files/hooks/useFiles";
 import { use } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -12,7 +12,6 @@ export default function DetailFilesPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { useFileDetail } = useFiles();
   const { data: fileData, isLoading, error } = useFileDetail(id);
 
   if (isLoading) {

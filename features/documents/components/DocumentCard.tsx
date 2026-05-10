@@ -16,7 +16,7 @@ import { DocumentMetrics } from "./DocumentMetrics";
 import { DocumentStatusBadge } from "./DocumentStatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
 import { Document } from "../model/documents.schema";
-import { useDocuments } from "../hooks/useDocuments";
+import { useDocumentDetail, useDocumentRaw, useDocumentRetry } from "../hooks/useDocuments";
 import { useDocumentSync } from "../hooks/useDocumentSync";
 
 interface DocumentCardProps {
@@ -28,13 +28,12 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
   const [retryOpen, setRetryOpen] = useState(false);
   const [activeView, setActiveView] = useState<"visual" | "json">("visual");
 
-  const { useDocumentDetail, useDocumentRaw, retry, isRetrying } =
-    useDocuments();
   const { data: detailResponse, isLoading: isDetailLoading } =
     useDocumentDetail(isOpen ? document.id : "");
   const { data: rawResponse, isLoading: isRawLoading } = useDocumentRaw(
     isOpen && activeView === "json" ? document.id : "",
   );
+  const { retry, isRetrying } = useDocumentRetry();
 
   // Sync document status via SSE
   useDocumentSync(document.id);
@@ -69,7 +68,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
       if (Array.isArray(parsed)) {
         detailsListItems = parsed as Record<string, unknown>[];
       }
-    } catch (_e) {
+    } catch {
       // ignore parse error
     }
   }
@@ -167,7 +166,7 @@ export const DocumentCard = ({ document }: DocumentCardProps) => {
                                 if (Array.isArray(parsed)) {
                                   displayValue = parsed.join(", ");
                                 }
-                              } catch (_e) {
+                              } catch {
                                 // ignore JSON parse error
                               }
                             } else if (Array.isArray(field.value)) {

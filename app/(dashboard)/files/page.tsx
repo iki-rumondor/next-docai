@@ -10,13 +10,13 @@ import {
 } from "@/shared/components/ui/select";
 import { Search, Filter, X } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDebounce } from "@/shared/hooks";
 import {
   FILE_STATUS_CONFIG,
   FILE_STATUSES,
 } from "@/shared/constants/file-status";
-import { FilesTable, useFiles } from "@/features/files";
+import { FilesTable, useFileList } from "@/features/files";
 
 export default function FilesPage() {
   const [search, setSearch] = useState("");
@@ -27,7 +27,6 @@ export default function FilesPage() {
 
   const debouncedSearch = useDebounce(search, 500);
 
-  const { useFileList } = useFiles();
   const { data: fileData, isLoading } = useFileList({
     status: statusFilter === "all" ? undefined : statusFilter,
     page: page,
@@ -38,9 +37,16 @@ export default function FilesPage() {
   });
 
   // Reset pagination when status filter or search changes
-  useEffect(() => {
+  const [prevFilters, setPrevFilters] = useState({ statusFilter, debouncedSearch, startDate, endDate });
+  if (
+    statusFilter !== prevFilters.statusFilter ||
+    debouncedSearch !== prevFilters.debouncedSearch ||
+    startDate !== prevFilters.startDate ||
+    endDate !== prevFilters.endDate
+  ) {
+    setPrevFilters({ statusFilter, debouncedSearch, startDate, endDate });
     setPage(1);
-  }, [statusFilter, debouncedSearch, startDate, endDate]);
+  }
 
   const jobs = fileData?.data || [];
   const pagination = fileData?.pagination;

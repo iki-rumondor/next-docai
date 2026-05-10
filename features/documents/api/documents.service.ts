@@ -3,10 +3,15 @@ import { apiClient } from '@/shared/api/axios';
 import { ApiResponse } from '@/shared/types/api-response';
 import { 
   Document, 
-  ListDocumentsQuery
+  ListDocumentsQuery,
+  DocumentType
 } from '../model/documents.schema';
 
 export const documentsService = {
+  getDocumentTypes: async (): Promise<ApiResponse<DocumentType[]>> => {
+    const { data } = await apiClient.get<ApiResponse<DocumentType[]>>('/documents/types');
+    return data;
+  },
   list: async (query?: ListDocumentsQuery): Promise<ApiResponse<Document[]>> => {
     if (env.NEXT_PUBLIC_MOCK_API) {
       return {

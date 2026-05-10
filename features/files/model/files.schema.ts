@@ -61,6 +61,7 @@ export const listFilesQuerySchema = z.object({
   search: z.string().optional(),
   start_date: z.string().optional(),
   end_date: z.string().optional(),
+  target_doc_type: z.string().optional(),
 });
 
 export type ListFilesQuery = z.infer<typeof listFilesQuerySchema>;

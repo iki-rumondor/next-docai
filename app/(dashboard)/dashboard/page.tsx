@@ -1,12 +1,10 @@
 'use client';
 
-import { FilesTable, useFiles } from "@/features/files";
+import { FilesTable, useFileList } from "@/features/files";
 import { DashboardStats } from "@/features/dashboard";
 import { Info, Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
-    const { useFileList } = useFiles();
-    
     // Fetch only the processing jobs for the list
     const { data: processingData, isLoading: isProcessingLoading } = useFileList({ status: 'processing' });
     

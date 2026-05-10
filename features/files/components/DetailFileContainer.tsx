@@ -17,13 +17,13 @@ import { StatusBadge } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
 import { Progress } from "@/shared/components/ui/progress";
 import {
-  useDocuments,
+  useDocumentsList,
   DocumentCard,
   Document,
   JsonViewer,
 } from "@/features/documents";
 import { SourceFile } from "../model/files.schema";
-import { useFiles } from "../hooks/useFiles";
+import { useFileRetry } from "../hooks/useFiles";
 import { useSourceFileSync } from '../hooks/useSourceFileSync';
 import {
   Select,
@@ -48,14 +48,13 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string>("all");
 
-  const { useDocumentsList } = useDocuments({
+  const { data: documentsData, isLoading } = useDocumentsList({
     source_file_id: job.id,
     page,
     limit: 10,
     status: status === "all" ? undefined : status,
   });
-  const { data: documentsData, isLoading } = useDocumentsList();
-  const { retry: retryFile, isRetrying: isRetryingFile } = useFiles();
+  const { retry: retryFile, isRetrying: isRetryingFile } = useFileRetry();
 
   // Sync file progress/status via SSE
   useSourceFileSync(job.id);

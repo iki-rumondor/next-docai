@@ -6,25 +6,25 @@ import { ListFilesQuery } from "../model/files.schema";
 import { toast } from "sonner";
 import { ApiError } from "@/shared/lib/api-error";
 
-export const useFiles = () => {
+export const useFileList = (query?: ListFilesQuery) => {
+  return useQuery({
+    queryKey: ["source-files", query],
+    queryFn: () => filesService.list(query),
+  });
+};
+
+export const useFileDetail = (id: string) => {
+  return useQuery({
+    queryKey: ["source-files", id],
+    queryFn: () => filesService.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useFileRetry = () => {
   const queryClient = useQueryClient();
 
-  const useFileList = (query?: ListFilesQuery) => {
-    return useQuery({
-      queryKey: ["source-files", query],
-      queryFn: () => filesService.list(query),
-    });
-  };
-
-  const useFileDetail = (id: string) => {
-    return useQuery({
-      queryKey: ["source-files", id],
-      queryFn: () => filesService.getById(id),
-      enabled: !!id,
-    });
-  };
-
-  const retryMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: (id: string) => filesService.retry(id),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["source-files"] });
@@ -37,9 +37,7 @@ export const useFiles = () => {
   });
 
   return {
-    useFileList,
-    useFileDetail,
-    retry: retryMutation.mutate,
-    isRetrying: retryMutation.isPending,
+    retry: mutation.mutate,
+    isRetrying: mutation.isPending,
   };
 };

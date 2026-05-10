@@ -81,6 +81,7 @@ export type Document = z.infer<typeof DocumentSchema>;
 
 export const listDocumentsQuerySchema = z.object({
   source_file_id: z.string().optional(),
+  document_type_id: z.string().optional(),
   page: z.number().optional(),
   limit: z.number().optional(),
   status: z.string().optional(),

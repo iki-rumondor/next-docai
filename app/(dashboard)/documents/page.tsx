@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DocumentCard, JsonViewer, useDocuments } from "@/features/documents";
+import { DocumentCard, JsonViewer, useDocumentsList, useDocumentRaw } from "@/features/documents";
 import { Loader2 } from "lucide-react";
 
 /**
@@ -9,7 +9,6 @@ import { Loader2 } from "lucide-react";
  * Replaces the previous mock-based implementation with real API integration.
  */
 const DocumentResultPage = () => {
-    const { useDocumentsList, useDocumentRaw } = useDocuments();
     const { data: documentsData, isLoading } = useDocumentsList();
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
