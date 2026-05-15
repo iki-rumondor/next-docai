@@ -111,4 +111,17 @@ export const filesService = {
     const { data } = await apiClient.post<ApiResponse<SourceFile>>(`/source-files/${id}/retry`);
     return data;
   },
+
+  getFileBlob: async (filePath: string): Promise<Blob> => {
+    // Ensure the path doesn't have double slashes if it starts with uploads/
+    const cleanPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+    
+    // We use standard axios or a specific config to get the blob
+    // apiClient already has the base URL and auth interceptors
+    const response = await apiClient.get(cleanPath, {
+      responseType: 'blob',
+    });
+    
+    return response.data;
+  },
 };

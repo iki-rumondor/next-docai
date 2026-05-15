@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertCircle,
   Clock,
@@ -11,7 +11,6 @@ import {
   Eye,
   Download,
 } from "lucide-react";
-import { env } from "@/shared/config/env";
 import { Button } from "@/shared/components/ui/button";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { RetryModal } from "@/shared/components/RetryModal";
@@ -25,6 +24,7 @@ import {
 import { SourceFile } from "../model/files.schema";
 import { useFileRetry } from "../hooks/useFiles";
 import { useSourceFileSync } from '../hooks/useSourceFileSync';
+import { useFileView } from "../hooks/useFileView";
 import {
   Select,
   SelectContent,
@@ -63,6 +63,15 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
   const [activeTab, setActiveTab] = useState<"documents" | "json" | "preview">(
     "documents",
   );
+
+  const { blobUrl, loadPreview, download: downloadFile, isLoading: isBlobLoading } = useFileView(job.file_path, job.file_name);
+
+  // Load preview only when user switches to preview tab (Lazy Loading)
+  useEffect(() => {
+    if (activeTab === "preview" && !blobUrl) {
+      loadPreview();
+    }
+  }, [activeTab, blobUrl, loadPreview]);
   const canRetry = job.status === "failed" || job.status === "pending_review";
 
   const handleRetryFile = () => {
@@ -96,15 +105,6 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
   const documents = Array.from(
     new Map(allDocuments.map((doc) => [doc.id, doc])).values(),
   );
-
-  const getFileUrl = () => {
-    if (job.file_path?.startsWith("http")) return job.file_path;
-    const baseUrl = env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, "");
-    const filePath = job.file_path?.startsWith("/")
-      ? job.file_path
-      : `/${job.file_path}`;
-    return `${baseUrl}${filePath}`;
-  };
 
   return (
     <>
@@ -243,12 +243,10 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               variant="outline"
               size="sm"
               className="h-9 text-xs rounded-xl"
-              asChild
+              onClick={downloadFile}
             >
-              <a href={getFileUrl()} target="_blank" rel="noopener noreferrer">
-                <Download className="w-3.5 h-3.5 mr-2" />
-                Download Original
-              </a>
+              <Download className="w-3.5 h-3.5 mr-2" />
+              Download Original
             </Button>
             {activeTab === "documents" && (
               <Select
@@ -359,11 +357,28 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               </div>
             </div>
             <div className="relative w-full aspect-[1/1.4] md:aspect-auto md:h-[800px] bg-muted/10">
-              <iframe
-                src={`${getFileUrl()}#toolbar=0&navpanes=0`}
-                className="w-full h-full border-0"
-                title={`Preview ${job.file_name}`}
-              />
+              {isBlobLoading ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                  <p className="text-sm text-muted-foreground animate-pulse">
+                    Securing & loading preview...
+                  </p>
+                </div>
+              ) : blobUrl ? (
+                <iframe
+                  src={`${blobUrl}#toolbar=0&navpanes=0`}
+                  className="w-full h-full border-0"
+                  title={`Preview ${job.file_name}`}
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                   <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                      <AlertCircle className="h-6 w-6 text-destructive" />
+                   </div>
+                   <p className="text-sm font-medium">Failed to load preview</p>
+                   <p className="text-xs text-muted-foreground mt-1">Please try downloading the file instead.</p>
+                </div>
+              )}
             </div>
           </div>
         ) : ( <JsonViewer
