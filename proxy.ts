@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { NAVIGATION_CONFIG } from './shared/config/navigation';
+import { PROTECTED_PATHS } from './shared/config/paths';
 
 export function proxy(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
@@ -9,14 +9,7 @@ export function proxy(request: NextRequest) {
   // Define public routes
   const isAuthRoute = pathname === '/login';
   
-  // Define protected routes based on centralized config
-  const protectedPaths = [
-    '/',
-    '/users', // Still protected even if not in main menu
-    ...NAVIGATION_CONFIG.map(item => item.to)
-  ];
-
-  const isProtectedRoute = protectedPaths.some(path => 
+  const isProtectedRoute = PROTECTED_PATHS.some(path => 
     path === '/' ? pathname === '/' : pathname.startsWith(path)
   );
 

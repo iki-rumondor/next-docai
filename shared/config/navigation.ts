@@ -16,4 +16,4 @@ export const NAVIGATION_CONFIG = [
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
-export type NavItem = typeof NAVIGATION_CONFIG[number];
+export type NavItem = (typeof NAVIGATION_CONFIG)[number];

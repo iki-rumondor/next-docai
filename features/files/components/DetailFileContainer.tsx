@@ -60,7 +60,7 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
   useSourceFileSync(job.id);
 
   const [retryOpen, setRetryOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"documents" | "json" | "preview">(
+  const [activeTab, setActiveTab] = useState<"documents" | "json" | "preview" | "boundary">(
     "documents",
   );
 
@@ -229,6 +229,14 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               Preview Document
             </Button>
             <Button
+              variant={activeTab === "boundary" ? "secondary" : "ghost"}
+              size="sm"
+              className="rounded-lg h-9 text-sm px-4"
+              onClick={() => setActiveTab("boundary")}
+            >
+              Boundary Data
+            </Button>
+            <Button
               variant={activeTab === "json" ? "secondary" : "ghost"}
               size="sm"
               className="rounded-lg h-9 text-sm px-4"
@@ -381,6 +389,11 @@ export const DetailFileContainer = ({ job }: { job: SourceFile }) => {
               )}
             </div>
           </div>
+        ) : activeTab === "boundary" ? (
+          <JsonViewer
+            data={job.boundary_results}
+            title={`Boundary Detection Results`}
+          />
         ) : ( <JsonViewer
             data={job}
             title={`File ${job.file_name} RAW Content`}

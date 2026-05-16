@@ -42,6 +42,7 @@ export const sourceFileSchema = z.object({
       name: z.string(),
     })
     .optional(),
+  boundary_results: z.array(z.any()).optional(),
 });
 
 export type SourceFile = z.infer<typeof sourceFileSchema>;
